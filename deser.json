@@ -1,0 +1,690 @@
+{
+ "startDate": "2025-04-21T00:00:00Z",
+ "endDate": "2025-04-27T00:00:00Z",
+ "group": {
+  "id": 2,
+  "name": "ФК-811"
+ },
+ "lessons": [
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Исай Алексей Николаевич"
+    }
+   ],
+   "subject": {
+    "name": "История"
+   },
+   "lesson": 1,
+   "weekday": 2,
+   "startTime": "08:00",
+   "endTime": "08:45"
+  },
+  {
+   "cabinet": {
+    "name": "34"
+   },
+   "teachers": [
+    {
+     "fio": "Корчагина Елена Юрьевна"
+    }
+   ],
+   "subject": {
+    "name": "География"
+   },
+   "lesson": 7,
+   "weekday": 2,
+   "startTime": "14:00",
+   "endTime": "14:45"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Якупова Зульфия Эмирзяновна"
+    }
+   ],
+   "subject": {
+    "name": "Математика"
+   },
+   "lesson": 8,
+   "weekday": 1,
+   "startTime": "15:00",
+   "endTime": "15:45"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Якупова Зульфия Эмирзяновна"
+    }
+   ],
+   "subject": {
+    "name": "Классный час"
+   },
+   "lesson": 5,
+   "weekday": 6,
+   "startTime": "11:35",
+   "endTime": "12:20"
+  },
+  {
+   "cabinet": {
+    "name": "Читальный зал"
+   },
+   "teachers": [
+    {
+     "fio": "Исламшина Гульнара Рашидовна"
+    }
+   ],
+   "subject": {
+    "name": "Иностранный язык"
+   },
+   "lesson": 2,
+   "weekday": 1,
+   "startTime": "08:50",
+   "endTime": "09:35"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Якупова Зульфия Эмирзяновна"
+    }
+   ],
+   "subject": {
+    "name": "Математика"
+   },
+   "lesson": 1,
+   "weekday": 4,
+   "startTime": "08:00",
+   "endTime": "08:45"
+  },
+  {
+   "cabinet": {
+    "name": "24"
+   },
+   "teachers": [
+    {
+     "fio": "Шарапова Лариса Геннадьевна"
+    }
+   ],
+   "subject": {
+    "name": "Биология"
+   },
+   "lesson": 3,
+   "weekday": 4,
+   "startTime": "09:40",
+   "endTime": "10:25"
+  },
+  {
+   "cabinet": {
+    "name": "24"
+   },
+   "teachers": [
+    {
+     "fio": "Гыйлмуллина Гульназ Рафисовна"
+    }
+   ],
+   "subject": {
+    "name": "Индивидуальный проект"
+   },
+   "lesson": 1,
+   "weekday": 3,
+   "startTime": "08:00",
+   "endTime": "08:45"
+  },
+  {
+   "cabinet": {
+    "name": "38"
+   },
+   "teachers": [
+    {
+     "fio": "Агмалова Айгуль Фаритовна"
+    }
+   ],
+   "subject": {
+    "name": "Информатика"
+   },
+   "lesson": 6,
+   "weekday": 1,
+   "startTime": "12:55",
+   "endTime": "13:40"
+  },
+  {
+   "cabinet": {
+    "name": "34"
+   },
+   "teachers": [
+    {
+     "fio": "Корчагина Елена Юрьевна"
+    }
+   ],
+   "subject": {
+    "name": "География"
+   },
+   "lesson": 8,
+   "weekday": 2,
+   "startTime": "15:00",
+   "endTime": "15:45"
+  },
+  {
+   "cabinet": {
+    "name": "43"
+   },
+   "teachers": [
+    {
+     "fio": "Нигматзянова Гузель Василовна"
+    }
+   ],
+   "subject": {
+    "name": "Татарский язык"
+   },
+   "lesson": 3,
+   "weekday": 5,
+   "startTime": "09:40",
+   "endTime": "10:25"
+  },
+  {
+   "cabinet": {
+    "name": "38"
+   },
+   "teachers": [
+    {
+     "fio": "Агмалова Айгуль Фаритовна"
+    }
+   ],
+   "subject": {
+    "name": "Информатика"
+   },
+   "lesson": 5,
+   "weekday": 1,
+   "startTime": "11:50",
+   "endTime": "12:35"
+  },
+  {
+   "cabinet": {
+    "name": "45"
+   },
+   "teachers": [
+    {
+     "fio": "Мамыкина Валентина Павловна"
+    }
+   ],
+   "subject": {
+    "name": "Литература"
+   },
+   "lesson": 4,
+   "weekday": 3,
+   "startTime": "10:45",
+   "endTime": "11:30"
+  },
+  {
+   "cabinet": {
+    "name": "45"
+   },
+   "teachers": [
+    {
+     "fio": "Мамыкина Валентина Павловна"
+    }
+   ],
+   "subject": {
+    "name": "Литература"
+   },
+   "lesson": 3,
+   "weekday": 3,
+   "startTime": "09:40",
+   "endTime": "10:25"
+  },
+  {
+   "cabinet": {
+    "name": "45"
+   },
+   "teachers": [
+    {
+     "fio": "Шарапова Лариса Геннадьевна"
+    }
+   ],
+   "subject": {
+    "name": "Биология"
+   },
+   "lesson": 7,
+   "weekday": 3,
+   "startTime": "14:00",
+   "endTime": "14:45"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Якупова Зульфия Эмирзяновна"
+    }
+   ],
+   "subject": {
+    "name": "Математика"
+   },
+   "lesson": 2,
+   "weekday": 4,
+   "startTime": "08:50",
+   "endTime": "09:35"
+  },
+  {
+   "cabinet": {
+    "name": "40"
+   },
+   "teachers": [
+    {
+     "fio": "Артемьева Мария Сергеевна"
+    }
+   ],
+   "subject": {
+    "name": "Русский язык"
+   },
+   "lesson": 5,
+   "weekday": 3,
+   "startTime": "11:50",
+   "endTime": "12:35"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Якупова Зульфия Эмирзяновна"
+    }
+   ],
+   "subject": {
+    "name": "Разговоры о важном"
+   },
+   "lesson": 3,
+   "weekday": 1,
+   "startTime": "09:40",
+   "endTime": "10:25"
+  },
+  {
+   "cabinet": {
+    "name": "Тренажерный зал"
+   },
+   "teachers": [
+    {
+     "fio": "Файзулина Азиза Рашитовна"
+    }
+   ],
+   "subject": {
+    "name": "ОБЗР"
+   },
+   "lesson": 6,
+   "weekday": 2,
+   "startTime": "12:55",
+   "endTime": "13:40"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Гыйлмуллина Гульназ Рафисовна"
+    }
+   ],
+   "subject": {
+    "name": "Физика"
+   },
+   "lesson": 5,
+   "weekday": 5,
+   "startTime": "11:50",
+   "endTime": "12:35"
+  },
+  {
+   "cabinet": {
+    "name": "25"
+   },
+   "teachers": [
+    {
+     "fio": "Тагирова Венера Кабировна"
+    }
+   ],
+   "subject": {
+    "name": "Родной язык (татарский)"
+   },
+   "lesson": 3,
+   "weekday": 5,
+   "startTime": "09:40",
+   "endTime": "10:25"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Якупова Зульфия Эмирзяновна"
+    }
+   ],
+   "subject": {
+    "name": "Математика"
+   },
+   "lesson": 4,
+   "weekday": 6,
+   "startTime": "10:40",
+   "endTime": "11:25"
+  },
+  {
+   "cabinet": {
+    "name": "Тренажерный зал"
+   },
+   "teachers": [
+    {
+     "fio": "Файзулина Азиза Рашитовна"
+    }
+   ],
+   "subject": {
+    "name": "ОБЗР"
+   },
+   "lesson": 3,
+   "weekday": 2,
+   "startTime": "09:40",
+   "endTime": "10:25"
+  },
+  {
+   "cabinet": {
+    "name": "40"
+   },
+   "teachers": [
+    {
+     "fio": "Исай Алексей Николаевич"
+    }
+   ],
+   "subject": {
+    "name": "История"
+   },
+   "lesson": 6,
+   "weekday": 3,
+   "startTime": "12:55",
+   "endTime": "13:40"
+  },
+  {
+   "cabinet": {
+    "name": "45"
+   },
+   "teachers": [
+    {
+     "fio": "Артемьева Мария Сергеевна"
+    }
+   ],
+   "subject": {
+    "name": "Русский язык"
+   },
+   "lesson": 4,
+   "weekday": 1,
+   "startTime": "10:45",
+   "endTime": "11:30"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Исай Алексей Николаевич"
+    }
+   ],
+   "subject": {
+    "name": "Обществознание"
+   },
+   "lesson": 6,
+   "weekday": 5,
+   "startTime": "12:55",
+   "endTime": "13:40"
+  },
+  {
+   "cabinet": {
+    "name": "43"
+   },
+   "teachers": [
+    {
+     "fio": "Нигматзянова Гузель Василовна"
+    }
+   ],
+   "subject": {
+    "name": "Татарский язык"
+   },
+   "lesson": 4,
+   "weekday": 5,
+   "startTime": "10:45",
+   "endTime": "11:30"
+  },
+  {
+   "cabinet": {
+    "name": "24"
+   },
+   "teachers": [
+    {
+     "fio": "Шарапова Лариса Геннадьевна"
+    }
+   ],
+   "subject": {
+    "name": "Биология"
+   },
+   "lesson": 4,
+   "weekday": 4,
+   "startTime": "10:45",
+   "endTime": "11:30"
+  },
+  {
+   "cabinet": {
+    "name": "Спортивный зал 1"
+   },
+   "teachers": [
+    {
+     "fio": "Залялов Ильназ Ильясович"
+    }
+   ],
+   "subject": {
+    "name": "Физическая культура"
+   },
+   "lesson": 1,
+   "weekday": 6,
+   "startTime": "08:00",
+   "endTime": "08:45"
+  },
+  {
+   "cabinet": {
+    "name": "37"
+   },
+   "teachers": [
+    {
+     "fio": "Габдуллина Гульнара Тимирхановна"
+    }
+   ],
+   "subject": {
+    "name": "Химия"
+   },
+   "lesson": 5,
+   "weekday": 2,
+   "startTime": "11:50",
+   "endTime": "12:35"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Исай Алексей Николаевич"
+    }
+   ],
+   "subject": {
+    "name": "История"
+   },
+   "lesson": 2,
+   "weekday": 2,
+   "startTime": "08:50",
+   "endTime": "09:35"
+  },
+  {
+   "cabinet": {
+    "name": "37"
+   },
+   "teachers": [
+    {
+     "fio": "Габдуллина Гульнара Тимирхановна"
+    }
+   ],
+   "subject": {
+    "name": "Химия"
+   },
+   "lesson": 4,
+   "weekday": 2,
+   "startTime": "10:45",
+   "endTime": "11:30"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Исай Алексей Николаевич"
+    }
+   ],
+   "subject": {
+    "name": "Обществознание"
+   },
+   "lesson": 2,
+   "weekday": 5,
+   "startTime": "08:50",
+   "endTime": "09:35"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Якупова Зульфия Эмирзяновна"
+    }
+   ],
+   "subject": {
+    "name": "Математика"
+   },
+   "lesson": 3,
+   "weekday": 6,
+   "startTime": "09:45",
+   "endTime": "10:30"
+  },
+  {
+   "cabinet": {
+    "name": "Читальный зал"
+   },
+   "teachers": [
+    {
+     "fio": "Исламшина Гульнара Рашидовна"
+    }
+   ],
+   "subject": {
+    "name": "Иностранный язык"
+   },
+   "lesson": 2,
+   "weekday": 3,
+   "startTime": "08:50",
+   "endTime": "09:35"
+  },
+  {
+   "cabinet": {
+    "name": "Спортивный зал 1"
+   },
+   "teachers": [
+    {
+     "fio": "Залялов Ильназ Ильясович"
+    }
+   ],
+   "subject": {
+    "name": "Физическая культура"
+   },
+   "lesson": 2,
+   "weekday": 6,
+   "startTime": "08:50",
+   "endTime": "09:35"
+  },
+  {
+   "cabinet": {
+    "name": "25"
+   },
+   "teachers": [
+    {
+     "fio": "Тагирова Венера Кабировна"
+    }
+   ],
+   "subject": {
+    "name": "Родной язык (татарский)"
+   },
+   "lesson": 4,
+   "weekday": 5,
+   "startTime": "10:45",
+   "endTime": "11:30"
+  },
+  {
+   "cabinet": {
+    "name": "Читальный зал"
+   },
+   "teachers": [
+    {
+     "fio": "Исламшина Гульнара Рашидовна"
+    }
+   ],
+   "subject": {
+    "name": "Иностранный язык"
+   },
+   "lesson": 8,
+   "weekday": 3,
+   "startTime": "15:00",
+   "endTime": "15:45"
+  },
+  {
+   "cabinet": {
+    "name": "25"
+   },
+   "teachers": [
+    {
+     "fio": "Гыйлмуллина Гульназ Рафисовна"
+    }
+   ],
+   "subject": {
+    "name": "Физика"
+   },
+   "lesson": 7,
+   "weekday": 1,
+   "startTime": "14:00",
+   "endTime": "14:45"
+  },
+  {
+   "cabinet": {
+    "name": "32"
+   },
+   "teachers": [
+    {
+     "fio": "Исай Алексей Николаевич"
+    }
+   ],
+   "subject": {
+    "name": "Обществознание"
+   },
+   "lesson": 1,
+   "weekday": 5,
+   "startTime": "08:00",
+   "endTime": "08:45"
+  }
+ ]
+}
