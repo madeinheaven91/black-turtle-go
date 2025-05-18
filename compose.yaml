@@ -1,0 +1,49 @@
+services:
+  bot:
+    container_name: bt-bot
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - POSTGRES_HOST=bt-bot-db
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    depends_on:
+      - bot-db
+      - pgadmin
+    tty: true
+
+  bot-db:
+    container_name: bt-bot-db
+    image: postgres:latest
+    hostname: localhost
+    ports:
+      - "3005:3005"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGPORT: ${POSTGRES_PORT}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+        # - transfer:/var/transfer:rw
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: bt-pgadmin
+    image: dpage/pgadmin4
+    depends_on:
+      - bot-db
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: 80
+    restart: always
+    volumes:
+      - pgadmin:/var/lib/pgadmin/
+
+volumes:
+  postgres-data:
+  pgadmin:
+    # transfer:
