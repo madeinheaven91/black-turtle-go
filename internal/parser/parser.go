@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/madeinheaven91/black-turtle-go/internal/logging"
 	"github.com/madeinheaven91/black-turtle-go/internal/parser/ir"
 	"github.com/madeinheaven91/black-turtle-go/internal/parser/lexer"
 	"github.com/madeinheaven91/black-turtle-go/internal/parser/token"
@@ -15,6 +16,12 @@ type Parser struct {
 
 	curToken  token.Token
 	peekToken token.Token
+}
+
+func FromString(input string) *Parser {
+	l := lexer.New(input)
+	p := New(l)
+	return p
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -38,6 +45,7 @@ func (p *Parser) ParseQuery() *ir.Query {
 	default:
 		return nil
 	}
+	logging.Trace(res.Command.String())
 	return &res
 }
 

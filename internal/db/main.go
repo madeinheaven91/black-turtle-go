@@ -62,6 +62,25 @@ func GetStudyEntity(conn *pgx.Conn, input string) (*models.DBStudyEntity, error)
 	return nil, err
 }
 
+func GetStudyEntityByChat(conn *pgx.Conn, chatId int64) (*models.DBStudyEntity, error) {
+	row := conn.QueryRow(context.Background(), "select study_entity.* from study_entity on join chat on chat.study_entity_id = study_entity.id where chat.id=%d", chatId)
+	var id int
+	var api_id int
+	var kind string
+	var name string
+	err := row.Scan(&id, &api_id, &kind, &name)
+	if err != nil {
+		return nil, err
+	}
+	res := models.DBStudyEntity{
+		Id:     id,
+		Api_id: api_id,
+		Kind:   models.StudyEntityType(kind),
+		Name:   name,
+	}
+	return &res, nil
+}
+
 func AddChat(conn *pgx.Conn, update *botmodels.Update) error {
 	{
 		var existing string

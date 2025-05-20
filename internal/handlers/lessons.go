@@ -6,7 +6,10 @@ import (
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-
+	"github.com/madeinheaven91/black-turtle-go/internal/logging"
+	"github.com/madeinheaven91/black-turtle-go/internal/parser"
+	"github.com/madeinheaven91/black-turtle-go/internal/parser/jsonbuilder"
+	"github.com/madeinheaven91/black-turtle-go/internal/parser/ir"
 )
 
 func LessonsMatch(update *models.Update) bool {
@@ -19,6 +22,28 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	// 3. select requested day from a week
 	// 4. build a message
 	// 5. send a message
+	logging.Debug("Handling lesson request")
+	input := update.Message.Text
+	p := parser.FromString(input)
+	query := p.ParseQuery()
+	if len(p.Errors()) != 0 {
+		logging.Error("parser error: %q\n", p.Errors())
+		reply(ctx, b, update, "Parser error")
+	}
+	_, ok := query.Command.(*ir.LessonsQuery)
+	if !ok {
+		logging.Error("query type assertion error: got %T\n", query)
+		reply(ctx, b, update, "Type assertion error")
+		return
+	}
+	json, err := jsonbuilder.BuildPayload(*query, update.Message.Chat.ID)
+	if err != nil {
+		reply(ctx, b, update, "Payload error")
+	}
+
+	reply(ctx, b, update, json)
+
+	logging.Trace("Done handling lesson request")
 
 	// req, err := parser.ParseToRequest(update.Message.Text)
 	// if err != nil {
