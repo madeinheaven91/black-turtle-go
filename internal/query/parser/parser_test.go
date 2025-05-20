@@ -3,8 +3,8 @@ package parser
 import (
 	"testing"
 
-	"github.com/madeinheaven91/black-turtle-go/internal/parser/ir"
-	"github.com/madeinheaven91/black-turtle-go/internal/parser/lexer"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/lexer"
 )
 
 func TestLessonQuery(t *testing.T) {

@@ -1,13 +1,15 @@
 package jsonbuilder
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/db"
+	"github.com/madeinheaven91/black-turtle-go/internal/errors"
 	"github.com/madeinheaven91/black-turtle-go/internal/logging"
 	"github.com/madeinheaven91/black-turtle-go/internal/models"
-	"github.com/madeinheaven91/black-turtle-go/internal/parser/ir"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
 )
 
 func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
@@ -29,7 +31,8 @@ func BuildPayload(query ir.Query, chatID int64) (string, error) {
 		return buildLessonsPayload(input, chatID)
 	}
 	logging.Trace("Unrecognized command type, no json payload")
-	return "", nil
+	err := errors.Wrap(fmt.Errorf("unrecognized command type %T", query.Command), "jsonbuilder error", map[string]any{})
+	return "", err
 }
 
 func buildLessonsPayload(query *ir.LessonsQuery, chatID int64) (string, error) {

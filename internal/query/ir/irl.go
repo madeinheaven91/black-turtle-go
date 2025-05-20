@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/madeinheaven91/black-turtle-go/internal/parser/token"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/token"
 )
 
 type Query struct {

@@ -58,12 +58,14 @@ func GetStudyEntity(conn *pgx.Conn, input string) (*models.DBStudyEntity, error)
 		}
 	}
 
-	err = errors.NewBotError("study entity not found")
+	err = errors.Wrap(fmt.Errorf("study entity not found"), "db error", map[string]any{
+		"studyEntityName": input,
+	})
 	return nil, err
 }
 
 func GetStudyEntityByChat(conn *pgx.Conn, chatId int64) (*models.DBStudyEntity, error) {
-	row := conn.QueryRow(context.Background(), "select study_entity.* from study_entity on join chat on chat.study_entity_id = study_entity.id where chat.id=%d", chatId)
+	row := conn.QueryRow(context.Background(), "select study_entity.* from study_entity join chat on chat.study_entity_id=study_entity.id where chat.id=$1", chatId)
 	var id int
 	var api_id int
 	var kind string
@@ -86,7 +88,9 @@ func AddChat(conn *pgx.Conn, update *botmodels.Update) error {
 		var existing string
 		err := conn.QueryRow(context.Background(), "select name from chat where id=$1", update.Message.Chat.ID).Scan(&existing)
 		if err == nil {
-			return errors.NewBotError("user already exists")
+			return errors.Wrap(fmt.Errorf("chat already exists"), "db error", map[string]any{
+				"id": update.Message.Chat.ID,
+			})
 		}
 	}
 
