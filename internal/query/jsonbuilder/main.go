@@ -31,7 +31,7 @@ func BuildPayload(query ir.Query, chatID int64) (string, error) {
 		return buildLessonsPayload(input, chatID)
 	}
 	logging.Trace("Unrecognized command type, no json payload")
-	err := errors.Wrap(fmt.Errorf("unrecognized command type %T", query.Command), "jsonbuilder error", map[string]any{})
+	err := errors.From(fmt.Errorf("unrecognized command type %T", query.Command), "jsonbuilder error", "unknownCommand", map[string]any{})
 	return "", err
 }
 

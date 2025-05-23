@@ -10,7 +10,9 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/errors"
+	"github.com/madeinheaven91/black-turtle-go/internal/logging"
 	"github.com/madeinheaven91/black-turtle-go/internal/models"
+	"github.com/madeinheaven91/black-turtle-go/internal/shared"
 )
 
 func GetConnection() *pgx.Conn {
@@ -23,7 +25,8 @@ func GetConnection() *pgx.Conn {
 	)
 	conn, err := pgx.Connect(context.Background(), connString)
 	if err != nil {
-		panic(err)
+		logging.Critical("%s\n", err)
+		os.Exit(1)
 	}
 	return conn
 }
@@ -58,7 +61,7 @@ func GetStudyEntity(conn *pgx.Conn, input string) (*models.DBStudyEntity, error)
 		}
 	}
 
-	err = errors.Wrap(fmt.Errorf("study entity not found"), "db error", map[string]any{
+	err = errors.From(fmt.Errorf("study entity not found"), "db error", "studyEntityNotFound", map[string]any{
 		"studyEntityName": input,
 	})
 	return nil, err
@@ -88,22 +91,13 @@ func AddChat(conn *pgx.Conn, update *botmodels.Update) error {
 		var existing string
 		err := conn.QueryRow(context.Background(), "select name from chat where id=$1", update.Message.Chat.ID).Scan(&existing)
 		if err == nil {
-			return errors.Wrap(fmt.Errorf("chat already exists"), "db error", map[string]any{
+			return errors.From(fmt.Errorf("chat already exists"), "db error", "", map[string]any{
 				"id": update.Message.Chat.ID,
 			})
 		}
 	}
 
-	var name string
-	if update.Message.Chat.FirstName != "" && update.Message.Chat.LastName != "" {
-		name = update.Message.Chat.FirstName + " " + update.Message.Chat.LastName
-	} else if update.Message.Chat.FirstName != "" {
-		name = update.Message.Chat.FirstName
-	} else if update.Message.Chat.Title != "" {
-		name = update.Message.Chat.Title
-	} else {
-		name = "<unknown>"
-	}
+	name := shared.GetChatName(update)
 	username := update.Message.Chat.Username
 	_, err := conn.Exec(context.Background(), "insert into chat(id, kind, name, username, is_banned) values ($1, $2, $3, $4, false)", update.Message.Chat.ID, update.Message.Chat.Type, name, username)
 	return err

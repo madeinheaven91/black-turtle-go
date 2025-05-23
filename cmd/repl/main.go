@@ -7,10 +7,10 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/madeinheaven91/black-turtle-go/internal/logging"
-	"github.com/madeinheaven91/black-turtle-go/internal/parser"
-	"github.com/madeinheaven91/black-turtle-go/internal/parser/ir"
-	"github.com/madeinheaven91/black-turtle-go/internal/parser/lexer"
-	"github.com/madeinheaven91/black-turtle-go/internal/parser/token"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/parser"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/lexer"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/token"
 )
 
 func main() {
