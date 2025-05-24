@@ -7,8 +7,8 @@ import (
 	botmodels "github.com/go-telegram/bot/models"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/db"
-	"github.com/madeinheaven91/black-turtle-go/internal/logging"
-	"github.com/madeinheaven91/black-turtle-go/internal/shared"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
 func LogRequest(next bot.HandlerFunc) bot.HandlerFunc {

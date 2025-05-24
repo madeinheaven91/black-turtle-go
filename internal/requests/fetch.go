@@ -6,8 +6,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/madeinheaven91/black-turtle-go/internal/logging"
-	"github.com/madeinheaven91/black-turtle-go/internal/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 )
 
 func FetchWeek(payload string) (*models.APIResponseGroup, error) {

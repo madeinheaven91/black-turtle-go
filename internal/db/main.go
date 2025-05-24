@@ -9,19 +9,20 @@ import (
 	botmodels "github.com/go-telegram/bot/models"
 	"github.com/jackc/pgx/v5"
 
-	"github.com/madeinheaven91/black-turtle-go/internal/errors"
-	"github.com/madeinheaven91/black-turtle-go/internal/logging"
-	"github.com/madeinheaven91/black-turtle-go/internal/models"
-	"github.com/madeinheaven91/black-turtle-go/internal/shared"
+	"github.com/madeinheaven91/black-turtle-go/pkg/config"
+	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
 func GetConnection() *pgx.Conn {
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_HOST"),
-		os.Getenv("POSTGRES_PORT"),
-		os.Getenv("POSTGRES_NAME"),
+		config.PgUser(),
+		config.PgPassword(),
+		config.PgHost(),
+		config.PgPort(),
+		config.PgName(),
 	)
 	conn, err := pgx.Connect(context.Background(), connString)
 	if err != nil {

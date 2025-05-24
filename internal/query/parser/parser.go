@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/madeinheaven91/black-turtle-go/internal/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/lexer"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/token"
@@ -18,6 +18,7 @@ type Parser struct {
 	peekToken token.Token
 }
 
+// Hides lexing part
 func FromString(input string) *Parser {
 	l := lexer.New(input)
 	p := New(l)
@@ -43,6 +44,7 @@ func (p *Parser) ParseQuery() *ir.Query {
 		res.CommandToken = p.curToken
 		res.Command = p.parseLessonQuery()
 	default:
+		logging.Warning("couldn't parse query starting with token %s of type %s", p.curToken.Literal, p.curToken.Type)
 		return nil
 	}
 	logging.Trace(res.Command.String())

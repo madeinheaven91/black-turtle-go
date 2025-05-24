@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-telegram/bot"
 	botmodels "github.com/go-telegram/bot/models"
-	"github.com/madeinheaven91/black-turtle-go/internal/errors"
-	"github.com/madeinheaven91/black-turtle-go/internal/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 )
 
 func reply(message string, ctx context.Context, b *bot.Bot, update *botmodels.Update) {

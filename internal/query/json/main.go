@@ -2,14 +2,15 @@ package jsonbuilder
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/db"
-	"github.com/madeinheaven91/black-turtle-go/internal/errors"
-	"github.com/madeinheaven91/black-turtle-go/internal/logging"
-	"github.com/madeinheaven91/black-turtle-go/internal/models"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
+
+	"github.com/madeinheaven91/black-turtle-go/pkg/config"
+	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 )
 
 func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
@@ -23,20 +24,21 @@ func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
 	return entity, nil
 }
 
-func BuildPayload(query ir.Query, chatID int64) (string, error) {
+func Payload(query ir.Query, chatID int64) (string, error) {
 	switch query.Command.(type) {
 	case *ir.LessonsQuery:
 		logging.Trace("Building payload for lesson query")
 		input := query.Command.(*ir.LessonsQuery)
-		return buildLessonsPayload(input, chatID)
+		return lessonsPayload(input, chatID)
+	default:
+		logging.Trace("Unrecognized command type, no json payload")
+		err := errors.From(fmt.Errorf("unrecognized command type %T", query.Command), "jsonbuilder error", "unknownCommand", map[string]any{})
+		return "", err
 	}
-	logging.Trace("Unrecognized command type, no json payload")
-	err := errors.From(fmt.Errorf("unrecognized command type %T", query.Command), "jsonbuilder error", "unknownCommand", map[string]any{})
-	return "", err
 }
 
-func buildLessonsPayload(query *ir.LessonsQuery, chatID int64) (string, error) {
-	publicationId := os.Getenv("PUBLICATION_ID")
+func lessonsPayload(query *ir.LessonsQuery, chatID int64) (string, error) {
+	publicationId := config.PublicationID()
 
 	var entity *models.DBStudyEntity
 	var err error

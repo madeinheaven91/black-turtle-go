@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	mymodels "github.com/madeinheaven91/black-turtle-go/internal/models"
+	mymodels "github.com/madeinheaven91/black-turtle-go/pkg/models"
 )
 
 // TODO:

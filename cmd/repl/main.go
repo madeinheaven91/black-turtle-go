@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/madeinheaven91/black-turtle-go/internal/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/parser"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/lexer"
@@ -22,7 +22,7 @@ func main() {
 	for k, v := range envFile {
 		os.Setenv(k, v)
 	}
-	logging.InitLogLevel()
+	logging.InitLoggers()
 
 	logging.Info("REPL for testing parser")
 

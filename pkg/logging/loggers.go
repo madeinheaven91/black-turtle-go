@@ -7,7 +7,8 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/madeinheaven91/black-turtle-go/internal/lexicon"
+	"github.com/madeinheaven91/black-turtle-go/pkg/config"
+	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 )
 
 var (
@@ -33,9 +34,9 @@ var (
 	once sync.Once
 )
 
-func InitLogLevel() {
+func InitLoggers() {
 	once.Do(func() {
-		levelStr := os.Getenv("LOG_LEVEL")
+		levelStr := config.LogLevel()
 		if level, exists := logLevels[levelStr]; exists {
 			logLevel = level
 		} else {

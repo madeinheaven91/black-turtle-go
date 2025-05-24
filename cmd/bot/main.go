@@ -10,8 +10,9 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/handlers"
-	"github.com/madeinheaven91/black-turtle-go/internal/logging"
-	"github.com/madeinheaven91/black-turtle-go/internal/middleware"
+	"github.com/madeinheaven91/black-turtle-go/internal/handlers/middleware"
+	"github.com/madeinheaven91/black-turtle-go/pkg/config"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 )
 
 func main() {
@@ -23,7 +24,8 @@ func main() {
 	for k, v := range envFile {
 		os.Setenv(k, v)
 	}
-	logging.InitLogLevel()
+	config.InitFromEnv()
+	logging.InitLoggers()
 
 
 	opts := []bot.Option{
@@ -31,7 +33,7 @@ func main() {
 		bot.WithDefaultHandler(func(ctx context.Context, bot *bot.Bot, update *models.Update) {}),
 	}
 
-	b, err := bot.New(os.Getenv("BOT_TOKEN"), opts...)
+	b, err := bot.New(config.BotToken(), opts...)
 	if err != nil {
 		logging.Critical("%s\n", err)
 		os.Exit(1)
