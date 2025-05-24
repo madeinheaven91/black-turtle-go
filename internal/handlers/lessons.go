@@ -3,18 +3,17 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
-	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/internal/messages"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
-	"github.com/madeinheaven91/black-turtle-go/internal/query/json"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/parser"
 	"github.com/madeinheaven91/black-turtle-go/internal/requests"
+	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
 func LessonsMatch(update *models.Update) bool {
@@ -27,50 +26,48 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	// 3. select requested day from a week
 	// 4. build a message
 	// 5. send a message
+
 	logging.Debug("Handling lesson request")
 	input := update.Message.Text
 	p := parser.FromString(input)
-	query := p.ParseQuery()
+	raw := p.ParseQuery()
 	if len(p.Errors()) != 0 {
 		errMsg := fmt.Sprintf("parser errors: %q\n", p.Errors())
 		logging.Error(errMsg)
 		reply(errors.Get("parserError", strings.Join(p.Errors(), ", ")), ctx, b, update)
 		return
 	}
-	req, ok := query.Command.(*ir.LessonsQuery)
+	lqr, ok := (*raw).(*ir.LessonsQueryRaw)
 	if !ok {
-		// NOTE: this shouldn't happen, but just in case
-		logging.Error("query type assertion error: got %T\n", query)
-		reply(errors.General(), ctx, b, update)
-		return
+		panic(fmt.Sprintf("not ok. got %T", raw))
 	}
-	json, err := jsonbuilder.Payload(*query, update.Message.Chat.ID)
+	query, err := lqr.Validate(update.Message.Chat.ID)
 	ok = handleBotError(err, ctx, b, update)
 	if !ok {
 		return
 	}
 
-	resp, err := requests.FetchWeek(json)
+	resp, err := requests.FetchWeek(query)
 	ok = handleBotError(err, ctx, b, update)
 	if !ok {
 		return
 	}
-
-	monday := req.Date().AddDate(0, 0, -int(req.Date().Weekday())+1)
 
 	week := resp.IntoWeek()
-	res := ""
-	res += resp.Group.Name + "\n"
-	for _, day := range week.Days {
-		newDate := monday.AddDate(0, 0, day.Weekday).Format("02.01.06")
-		res += fmt.Sprintf("%d уроков, %s\n", len(day.Lessons), newDate)
-		for _, l := range day.Lessons {
-			res += strconv.Itoa(l.Index+1) + " " + l.StartTime + " - " + l.EndTime + " " + l.Name + "\n"
-		}
-		res += "\n\n"
+	
+	var displayName string
+	if resp.Group != nil {
+		displayName = resp.Group.Name
+	} else if resp.Teacher != nil {
+		displayName = *resp.Teacher.Fio
+	} else {
+		displayName = "null"
 	}
-
-	msg := messages.BuildDayMsg(week.Days[req.Date().Weekday()-1], *req.Date(), resp.Group.Name)
+	msg := messages.BuildDayMsg(
+		week.Days[shared.NormalizeWeekday(query.Date.Weekday())],
+		query.Date,
+		displayName,
+	)
 
 	reply(msg, ctx, b, update)
 	logging.Trace("Done handling lesson request")

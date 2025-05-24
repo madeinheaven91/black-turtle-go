@@ -17,6 +17,15 @@ func reply(message string, ctx context.Context, b *bot.Bot, update *botmodels.Up
 	})
 }
 
+func replyWithKb(message string, kb *botmodels.InlineKeyboardMarkup, ctx context.Context, b *bot.Bot, update *botmodels.Update) {
+	b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID:    update.Message.Chat.ID,
+		Text:      message,
+		ReplyMarkup: kb,
+		ParseMode: botmodels.ParseModeHTML,
+	})
+}
+
 
 func handleBotError(err error, ctx context.Context, b *bot.Bot, update *botmodels.Update) bool {
 	if err != nil {

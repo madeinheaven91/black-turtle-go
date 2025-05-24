@@ -9,7 +9,7 @@ const (
 )
 
 type SchoolWeek struct {
-	EntityName string 
+	Owner string 
 	StartDate time.Time 
 	EndDate time.Time 
 	Days []SchoolDay
@@ -17,15 +17,15 @@ type SchoolWeek struct {
 
 type SchoolDay struct {
 	Weekday int
-	Date string 
 	Lessons []Lesson
 }
 
 type Lesson struct {
 	Index int 
+	Type string
 	StartTime string 
 	EndTime string 
 	Name string 
-	Teacher *string 
+	RelatedTo *string 
 	Cabinet *string
 }

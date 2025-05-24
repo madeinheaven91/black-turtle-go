@@ -66,7 +66,7 @@ func TestLessonQuery(t *testing.T) {
 			continue
 		}
 
-		lq, ok := q.Command.(*ir.LessonsQuery)
+		lq, ok := (*q).(*ir.LessonsQueryRaw)
 		if ok {
 			if lq.String() != testcase.expected {
 				t.Fatalf("test %d: expected %s, got %s", testIndex, testcase.expected, lq.String())

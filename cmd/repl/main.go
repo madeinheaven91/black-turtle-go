@@ -6,11 +6,12 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
-	"github.com/madeinheaven91/black-turtle-go/internal/query/parser"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/lexer"
+	"github.com/madeinheaven91/black-turtle-go/internal/query/parser"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/token"
+	"github.com/madeinheaven91/black-turtle-go/pkg/config"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 )
 
 func main() {
@@ -22,6 +23,7 @@ func main() {
 	for k, v := range envFile {
 		os.Setenv(k, v)
 	}
+	config.InitFromEnv()
 	logging.InitLoggers()
 
 	logging.Info("REPL for testing parser")
@@ -42,12 +44,12 @@ func main() {
 
 		l = lexer.New(line)
 		p := parser.New(l)
-		query := p.ParseQuery()
-		if query == nil {
+		raw := p.ParseQuery()
+		if raw == nil {
 			logging.Error("unknown command")
 			return
 		}
-		lq, ok := query.Command.(*ir.LessonsQuery)
+		lq, ok := (*raw).(*ir.LessonsQueryRaw)
 		if ok {
 			logging.Debug("%s", lq)
 		}

@@ -37,22 +37,21 @@ func (p *Parser) nextToken() {
 	p.peekToken = p.l.NextToken()
 }
 
-func (p *Parser) ParseQuery() *ir.Query {
-	res := ir.Query{}
+func (p *Parser) ParseQuery() *ir.QueryRaw {
+	var res ir.QueryRaw
 	switch p.curToken.Type {
 	case token.LESSONS:
-		res.CommandToken = p.curToken
-		res.Command = p.parseLessonQuery()
+		res = p.parseLessonQuery()
 	default:
 		logging.Warning("couldn't parse query starting with token %s of type %s", p.curToken.Literal, p.curToken.Type)
 		return nil
 	}
-	logging.Trace(res.Command.String())
+	logging.Trace(res.String())
 	return &res
 }
 
-func (p *Parser) parseLessonQuery() *ir.LessonsQuery {
-	query := ir.LessonsQuery{}
+func (p *Parser) parseLessonQuery() *ir.LessonsQueryRaw {
+	query := ir.LessonsQueryRaw{}
 	for !p.curTokenIs(token.EOF) {
 		switch p.curToken.Type {
 		case token.LESSONS:

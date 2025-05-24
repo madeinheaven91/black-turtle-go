@@ -6,6 +6,7 @@ import (
 	"time"
 
 	mymodels "github.com/madeinheaven91/black-turtle-go/pkg/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
 // TODO:
@@ -15,20 +16,20 @@ func BuildDayMsg(day mymodels.SchoolDay, date time.Time, entityName string) stri
 	sb.WriteString(entityName)
 	sb.WriteRune('\n')
 	weekday := ""
-	switch date.Weekday() {
-	case 1:
+	switch shared.NormalizeWeekday(date.Weekday()) {
+	case 0:
 		weekday = "Понедельник"
-	case 2:
+	case 1:
 		weekday = "Вторник"
-	case 3:
+	case 2:
 		weekday = "Среда"
-	case 4:
+	case 3:
 		weekday = "Четверг"
-	case 5:
+	case 4:
 		weekday = "Пятница"
-	case 6:
+	case 5:
 		weekday = "Суббота"
-	case 7:
+	case 6:
 		weekday = "Воскресенье"
 	default:
 		weekday = "???"
@@ -46,10 +47,14 @@ func BuildDayMsg(day mymodels.SchoolDay, date time.Time, entityName string) stri
 		for _, lesson := range day.Lessons {
 			sb.WriteString(fmt.Sprintf("——————| %d урок |——————\n\n", lesson.Index+1))
 			sb.WriteString(fmt.Sprintf("⏳%s — %s\n", lesson.StartTime, lesson.EndTime))
-			sb.WriteString(fmt.Sprintf("📖 <b>%s</b>\n", lesson.Name))
+			if lesson.Type == "" {
+				sb.WriteString(fmt.Sprintf("📖 <b>%s</b>\n", lesson.Name))
+			} else {
+				sb.WriteString(fmt.Sprintf("📖 <b>%s (%s)</b>\n", lesson.Name, lesson.Type))
+			}
 			var teacher = "<i>Преподаватель не указан</i>"
-			if lesson.Cabinet != nil {
-				teacher = *lesson.Teacher
+			if lesson.RelatedTo != nil {
+				teacher = *lesson.RelatedTo
 			}
 			sb.WriteString(fmt.Sprintf("🎓 %s\n", teacher))
 			var cabinet = "<i>Кабинет не указан</i>"

@@ -3,20 +3,26 @@ package requests
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
+	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
+	"github.com/madeinheaven91/black-turtle-go/pkg/config"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
-func FetchWeek(payload string) (*models.APIResponseGroup, error) {
+func FetchWeek(query *ir.LessonsQuery) (*models.APIResponse, error) {
 	// logging.Debug("Requesting %s with api id %d for %s\n", entityType, entityId, queryDate.Format("02.01.2006"))
 
+	payload := lessonsPayload(query)
 	b := bytes.NewBuffer([]byte(payload))
 
 	resp, err := http.Post(
-		"https://schedule.mstimetables.ru/api/publications/group/lessons",
+		fmt.Sprintf("https://schedule.mstimetables.ru/api/publications/%s/lessons", query.StudyEntityType),
 		"application/json",
 		b,
 	)
@@ -28,10 +34,29 @@ func FetchWeek(payload string) (*models.APIResponseGroup, error) {
 
 	res, _ := io.ReadAll(resp.Body)
 
-	var obj models.APIResponseGroup
+	var obj models.APIResponse
 	if err := json.Unmarshal(res, &obj); err != nil {
 		panic(err)
 	}
 
 	return &obj, err
+}
+
+func lessonsPayload(query *ir.LessonsQuery) string {
+	logging.Trace("making lessons payload for %s %s (id: %d) for %s", query.StudyEntityType, query.StudyEntityName, query.StudyEntityApiId, query.Date.Format("02.01.2006"))
+	publicationId := config.PublicationID()
+
+	date := shared.GetMonday(query.Date)
+
+	var idKey string
+	switch query.StudyEntityType {
+	case models.Group:
+		idKey = "groupId"
+	case models.Teacher:
+		idKey = "teacherId"
+	}
+
+	payloadText := `{"` + idKey + `":"` + strconv.Itoa(query.StudyEntityApiId) + `","date":"` + date.Format("2006-01-02") + `","publicationId":"` + publicationId + `"}`
+
+	return payloadText
 }

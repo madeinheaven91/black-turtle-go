@@ -1,6 +1,8 @@
 package shared
 
 import (
+	"time"
+
 	botmodels "github.com/go-telegram/bot/models"
 )
 
@@ -36,4 +38,14 @@ func GetFromName(update *botmodels.Update) string {
 		name = "<unknown>"
 	}
 	return name
+}
+
+// Normalizes Go Weekday type. Sunday = 0, ..., Saturday = 6 becomes Monday = 0, ..., Sunday = 6
+func NormalizeWeekday(weekday time.Weekday) int {
+	return (int(weekday) + 6) % 7
+}
+
+// Returns monday of the week that the input date belongs to
+func GetMonday(date time.Time) time.Time {
+	return date.AddDate(0, 0, -int(NormalizeWeekday(date.Weekday())))
 }

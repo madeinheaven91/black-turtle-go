@@ -1,71 +1,46 @@
-package jsonbuilder
+package json
 
 import (
 	"fmt"
 	"strconv"
 
-	"github.com/madeinheaven91/black-turtle-go/internal/db"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
 
 	"github.com/madeinheaven91/black-turtle-go/pkg/config"
 	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
-func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
-	conn := db.GetConnection()
-	defer db.CloseConn(conn)
-
-	entity, err := db.GetStudyEntity(conn, name)
-	if err != nil {
-		return nil, err
-	}
-	return entity, nil
-}
-
-func Payload(query ir.Query, chatID int64) (string, error) {
-	switch query.Command.(type) {
-	case *ir.LessonsQuery:
-		logging.Trace("Building payload for lesson query")
-		input := query.Command.(*ir.LessonsQuery)
-		return lessonsPayload(input, chatID)
+func Payload(query ir.Query) (string, error) {
+	// NOTE: there are currently no other scenarios where payload is needed
+	// but let it be here for scalability (i think???)
+	switch query := query.(type) {
+	case ir.LessonsQuery:
+		return lessonsPayload(&query)
 	default:
 		logging.Trace("Unrecognized command type, no json payload")
-		err := errors.From(fmt.Errorf("unrecognized command type %T", query.Command), "jsonbuilder error", "unknownCommand", map[string]any{})
+		err := errors.From(fmt.Errorf("unrecognized command type %T", query), "json error", "unknownCommand", map[string]any{})
 		return "", err
 	}
 }
 
-func lessonsPayload(query *ir.LessonsQuery, chatID int64) (string, error) {
+func lessonsPayload(query *ir.LessonsQuery) (string, error) {
+	logging.Trace("making lessons payload for %s %s (id: %d) for %s", query.StudyEntityType, query.StudyEntityName, query.StudyEntityApiId, query.Date.Format("02.01.2006"))
 	publicationId := config.PublicationID()
 
-	var entity *models.DBStudyEntity
-	var err error
-	if query.StudyEntityName == nil {
-		conn := db.GetConnection()
-		defer db.CloseConn(conn)
-		entity, err = db.GetStudyEntityByChat(conn, chatID)
-		if err != nil {
-			return "", err
-		}
-	} else {
-		entity, err = validateStudyEntity(*query.StudyEntityName)
-		if err != nil {
-			return "", err
-		}
-	}
-	date := query.Date()
+	date := shared.GetMonday(query.Date)
 
 	var idKey string
-	switch entity.Kind {
+	switch query.StudyEntityType {
 	case models.Group:
 		idKey = "groupId"
 	case models.Teacher:
 		idKey = "teacherId"
 	}
 
-	payloadText := `{"` + idKey + `":"` + strconv.Itoa(entity.Api_id) + `","date":"` + date.Format("2006-01-02") + `","publicationId":"` + publicationId + `"}`
+	payloadText := `{"` + idKey + `":"` + strconv.Itoa(query.StudyEntityApiId) + `","date":"` + date.Format("2006-01-02") + `","publicationId":"` + publicationId + `"}`
 
 	return payloadText, nil
 }
