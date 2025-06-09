@@ -48,6 +48,7 @@ func main() {
 	logging.Info("Starting bot")
 	b.RegisterHandlerMatchFunc(handlers.LessonsMatch, handlers.LessonsHandler, middleware.LogRequest, middleware.DbSync)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "start", bot.MatchTypeCommand, handlers.StartHandler, middleware.LogRequest, middleware.DbSync)
+	b.RegisterHandlerMatchFunc(handlers.HelpMatch, handlers.HelpHandler, middleware.LogRequest, middleware.DbSync)
 	// b.RegisterHandlerMatchFunc(handlers.HelpMatch, handlers.StartHandler, middleware.LogRequest, middleware.DbSync)
 	b.Start(ctx)
 }

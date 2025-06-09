@@ -11,6 +11,7 @@ import (
 
 	"github.com/madeinheaven91/black-turtle-go/pkg/config"
 	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
@@ -62,7 +63,7 @@ func GetStudyEntity(conn *pgx.Conn, input string) (*models.DBStudyEntity, error)
 		}
 	}
 
-	err = errors.From(fmt.Errorf("study entity not found"), "db error", "studyEntityNotFound", map[string]any{
+	err = errors.From(fmt.Errorf("study entity not found"), "db error", lexicon.EStudyEntityNotFound, map[string]any{
 		"studyEntityName": input,
 	})
 	return nil, err
@@ -92,7 +93,7 @@ func AddChat(conn *pgx.Conn, update *botmodels.Update) error {
 		var existing string
 		err := conn.QueryRow(context.Background(), "select name from chat where id=$1", update.Message.Chat.ID).Scan(&existing)
 		if err == nil {
-			return errors.From(fmt.Errorf("chat already exists"), "db error", "", map[string]any{
+			return errors.From(fmt.Errorf("chat already exists"), "db error", lexicon.EGeneral, map[string]any{
 				"id": update.Message.Chat.ID,
 			})
 		}

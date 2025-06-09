@@ -8,6 +8,7 @@ import (
 
 	"github.com/madeinheaven91/black-turtle-go/pkg/config"
 	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
@@ -21,7 +22,7 @@ func Payload(query ir.Query) (string, error) {
 		return lessonsPayload(&query)
 	default:
 		logging.Trace("Unrecognized command type, no json payload")
-		err := errors.From(fmt.Errorf("unrecognized command type %T", query), "json error", "unknownCommand", map[string]any{})
+		err := errors.From(fmt.Errorf("unrecognized command type %T", query), "json error", lexicon.EUnknownCommand, map[string]any{})
 		return "", err
 	}
 }

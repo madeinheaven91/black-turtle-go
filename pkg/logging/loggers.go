@@ -43,7 +43,7 @@ func InitLoggers() {
 			logLevel = logLevels["INFO"]
 		}
 	})
-	fmt.Println(lexicon.Get("greeting"))
+	fmt.Println(lexicon.Get(lexicon.Greeting))
 
 	var lvl string
 	for k, v := range logLevels {

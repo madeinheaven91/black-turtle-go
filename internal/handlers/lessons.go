@@ -12,6 +12,7 @@ import (
 	"github.com/madeinheaven91/black-turtle-go/internal/query/parser"
 	"github.com/madeinheaven91/black-turtle-go/internal/requests"
 	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
@@ -34,7 +35,7 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	if len(p.Errors()) != 0 {
 		errMsg := fmt.Sprintf("parser errors: %q\n", p.Errors())
 		logging.Error(errMsg)
-		reply(errors.Get("parserError", strings.Join(p.Errors(), ", ")), ctx, b, update)
+		reply(errors.Get(lexicon.EParser, strings.Join(p.Errors(), ", ")), ctx, b, update)
 		return
 	}
 	lqr, ok := (*raw).(*ir.LessonsQueryRaw)

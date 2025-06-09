@@ -7,10 +7,10 @@ import (
 )
 
 type BotError struct {
-	Err        error
-	Message    string
-	LexiconKey string
-	Metadata   map[string]any
+	Err      error
+	Message  string
+	ErrorKey lexicon.ErrorKey
+	Metadata map[string]any
 }
 
 func (e BotError) Error() string {
@@ -18,26 +18,21 @@ func (e BotError) Error() string {
 }
 
 // Create a BotError from error
-func From(err error, message string, key string, metadata map[string]any) *BotError {
+func From(err error, message string, key lexicon.ErrorKey, metadata map[string]any) *BotError {
 	return &BotError{
-		Err:        err,
-		Message:    message,
-		LexiconKey: key,
-		Metadata:   metadata,
+		Err:      err,
+		Message:  message,
+		ErrorKey: key,
+		Metadata: metadata,
 	}
 }
 
 // Get display message
 func (e *BotError) Display() string {
-	return lexicon.Error(e.LexiconKey)
-}
-
-// Get general display error message
-func General() string {
-	return lexicon.Error("")
+	return lexicon.Error(e.ErrorKey)
 }
 
 // Get display error message from lexicon with key with metadata
-func Get(key string, metadata ...any) string {
+func Get(key lexicon.ErrorKey, metadata ...any) string {
 	return lexicon.Error(key, metadata...)
 }

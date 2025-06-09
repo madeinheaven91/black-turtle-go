@@ -6,6 +6,7 @@ import (
 	"github.com/go-telegram/bot"
 	botmodels "github.com/go-telegram/bot/models"
 	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 )
 
@@ -17,16 +18,6 @@ func reply(message string, ctx context.Context, b *bot.Bot, update *botmodels.Up
 	})
 }
 
-func replyWithKb(message string, kb *botmodels.InlineKeyboardMarkup, ctx context.Context, b *bot.Bot, update *botmodels.Update) {
-	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID:    update.Message.Chat.ID,
-		Text:      message,
-		ReplyMarkup: kb,
-		ParseMode: botmodels.ParseModeHTML,
-	})
-}
-
-
 func handleBotError(err error, ctx context.Context, b *bot.Bot, update *botmodels.Update) bool {
 	if err != nil {
 		e, ok := err.(*errors.BotError)
@@ -35,7 +26,7 @@ func handleBotError(err error, ctx context.Context, b *bot.Bot, update *botmodel
 			reply(e.Display(), ctx, b, update)
 		} else {
 			logging.Error("%q", err)
-			reply(errors.General(), ctx, b, update)
+			reply(lexicon.Error(lexicon.EGeneral), ctx, b, update)
 		}
 		return false
 	}
