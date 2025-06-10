@@ -10,25 +10,31 @@ import (
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 )
 
-func reply(message string, ctx context.Context, b *bot.Bot, update *botmodels.Update) {
-	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID:    update.Message.Chat.ID,
-		Text:      message,
-		ParseMode: botmodels.ParseModeHTML,
-	})
-}
-
 func handleBotError(err error, ctx context.Context, b *bot.Bot, update *botmodels.Update) bool {
 	if err != nil {
 		e, ok := err.(*errors.BotError)
-		if ok{
+		if ok {
 			logging.Error("%q", e)
-			reply(e.Display(), ctx, b, update)
+			b.SendMessage(ctx, params(update, e.Display()))
 		} else {
 			logging.Error("%q", err)
-			reply(lexicon.Error(lexicon.EGeneral), ctx, b, update)
+			b.SendMessage(ctx, params(update, lexicon.Error(lexicon.EGeneral)))
 		}
 		return false
 	}
 	return true
+}
+
+func params(update *botmodels.Update, text string) *bot.SendMessageParams {
+	return &bot.SendMessageParams{
+		ChatID: update.Message.Chat.ID,
+		Text: text,
+		ParseMode: botmodels.ParseModeHTML,
+	}
+
+}
+
+func addReplyMarkup(params *bot.SendMessageParams, kb botmodels.ReplyMarkup) *bot.SendMessageParams {
+	params.ReplyMarkup = kb
+	return params
 }

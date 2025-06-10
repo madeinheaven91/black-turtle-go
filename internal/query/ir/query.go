@@ -24,3 +24,12 @@ func (l LessonsQuery) query() {}
 func (l LessonsQuery) String() string {
 	return fmt.Sprintf("пары %s (id: %d) на %s", l.StudyEntityName, l.StudyEntityApiId, l.Date.Format("02.01.2006"))
 }
+
+type HelpQuery struct {
+	Command models.Command
+}
+
+func (h HelpQuery) query() {}
+func (h HelpQuery) String() string {
+	return fmt.Sprintf("помощь %s", h.Command)
+}

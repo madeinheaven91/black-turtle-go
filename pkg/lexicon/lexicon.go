@@ -1,7 +1,6 @@
 package lexicon
 
 import (
-	"fmt"
 	"strings"
 	"sync"
 )
@@ -183,7 +182,7 @@ func Get(key LexiconKey) string {
 }
 
 // Get display error message by key and provide metadata
-func Error(key ErrorKey, metadata ...any) string {
+func Error(key ErrorKey) string {
 	mutex.RLock()
 	defer mutex.RUnlock()
 
@@ -192,18 +191,6 @@ func Error(key ErrorKey, metadata ...any) string {
 		val = errorLexicon[EGeneral]
 	}
 	data := make([]string, 0)
-	for _, item := range metadata {
-		switch v := item.(type) {
-		case string:
-			data = append(data, v)
-		case fmt.Stringer:
-			data = append(data, v.String())
-		case error:
-			data = append(data, v.Error())
-		default:
-			data = append(data, fmt.Sprintf("%v", v))
-		}
-	}
 	if len(data) != 0 {
 		return "🚫 Ошибка!\n\n" + val + " " + strings.Join(data, ", ") + "\n\nПропишите <b>помощь</b> для вывода справки или обратитесь в техподдержку"
 	} else {

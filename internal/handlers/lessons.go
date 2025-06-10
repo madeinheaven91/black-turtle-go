@@ -33,14 +33,14 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	p := parser.FromString(input)
 	raw := p.ParseQuery()
 	if len(p.Errors()) != 0 {
-		errMsg := fmt.Sprintf("parser errors: %q\n", p.Errors())
-		logging.Error(errMsg)
-		reply(errors.Get(lexicon.EParser, strings.Join(p.Errors(), ", ")), ctx, b, update)
+		logging.Error(fmt.Sprintf("parser errors: %q\n", p.Errors()))
+		b.SendMessage(ctx, params(update, errors.Get(lexicon.EParser)))
 		return
 	}
 	lqr, ok := (*raw).(*ir.LessonsQueryRaw)
 	if !ok {
-		panic(fmt.Sprintf("not ok. got %T", raw))
+		logging.Error("can't convert *QueryRaw into *LessonsQueryRaw, wtf??")
+		return
 	}
 	query, err := lqr.Validate(update.Message.Chat.ID)
 	ok = handleBotError(err, ctx, b, update)
@@ -55,7 +55,7 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	}
 
 	week := resp.IntoWeek()
-	
+
 	var displayName string
 	if resp.Group != nil {
 		displayName = resp.Group.Name
@@ -70,6 +70,6 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		displayName,
 	)
 
-	reply(msg, ctx, b, update)
+	b.SendMessage(ctx, params(update, msg))
 	logging.Trace("Done handling lesson request")
 }

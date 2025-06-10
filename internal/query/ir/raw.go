@@ -25,7 +25,6 @@ type LessonsQueryRaw struct {
 }
 
 func (l LessonsQueryRaw) queryRaw() {}
-
 func (l *LessonsQueryRaw) String() string {
 	if l == nil {
 		return ""
@@ -105,7 +104,7 @@ func (l *LessonsQueryRaw) Date() *time.Time {
 	}
 }
 
-func (l *LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
+func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 	var res LessonsQuery
 	res.Date = *l.Date()
 	
@@ -141,4 +140,21 @@ func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
 		return nil, err
 	}
 	return entity, nil
+}
+
+type HelpQueryRaw struct {
+	Command models.Command
+}
+
+func (h HelpQueryRaw) queryRaw() {}
+func (h *HelpQueryRaw) String() string {
+	if h == nil {
+		return ""
+	}
+	return fmt.Sprintf("помощь %s", h.Command)
+}
+
+func (h HelpQueryRaw) Validate() *HelpQuery {
+	res := HelpQuery(h)
+	return &res
 }

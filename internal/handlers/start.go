@@ -17,17 +17,8 @@ func StartHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	err := db.AddChat(conn, update)
 	if err != nil {
 		logging.Error("%s\n", err)
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID:      update.Message.Chat.ID,
-			Text:        lexicon.Error(lexicon.EGeneral),
-			ParseMode:   botmodels.ParseModeHTML,
-		})
+		b.SendMessage(ctx, params(update, lexicon.Error(lexicon.EGeneral)))
 	} else {
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID:    update.Message.Chat.ID,
-			Text:      "Добавил",
-			ReplyMarkup: keyboards.Default(),
-			ParseMode: botmodels.ParseModeHTML,
-		})
+		b.SendMessage(ctx, addReplyMarkup(params(update, "Добавил"), keyboards.Default()))
 	}
 }

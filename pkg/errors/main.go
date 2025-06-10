@@ -33,6 +33,6 @@ func (e *BotError) Display() string {
 }
 
 // Get display error message from lexicon with key with metadata
-func Get(key lexicon.ErrorKey, metadata ...any) string {
-	return lexicon.Error(key, metadata...)
+func Get(key lexicon.ErrorKey) string {
+	return lexicon.Error(key)
 }

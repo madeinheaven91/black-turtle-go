@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/ir"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/lexer"
 	"github.com/madeinheaven91/black-turtle-go/internal/query/token"
+	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
+	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 )
 
 type Parser struct {
@@ -42,6 +43,8 @@ func (p *Parser) ParseQuery() *ir.QueryRaw {
 	switch p.curToken.Type {
 	case token.LESSONS:
 		res = p.parseLessonQuery()
+	case token.HELP:
+		res = p.parseHelpQuery()
 	default:
 		logging.Warning("couldn't parse query starting with token %s of type %s", p.curToken.Literal, p.curToken.Type)
 		return nil
@@ -132,4 +135,24 @@ func parseDate(input string) (*time.Time, error) {
 
 	e := fmt.Errorf("couldn't parse date")
 	return nil, e
+}
+
+func (p *Parser) parseHelpQuery() *ir.HelpQueryRaw {
+	query := ir.HelpQueryRaw{}
+	if p.peekToken.Type == token.EOF {
+		query.Command = models.Nil
+		return &query
+	}
+	switch p.peekToken.Type {
+	case token.LESSONS:
+		query.Command = models.Lessons
+	case token.FIO:
+		query.Command = models.Fio
+	case token.BELLS:
+		query.Command = models.Bells
+	default:
+		p.errors = append(p.errors, fmt.Sprintf("unexpected command %v", p.peekToken.Literal))
+		return nil
+	}
+	return &query
 }
