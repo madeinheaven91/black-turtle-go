@@ -14,10 +14,15 @@ import (
 	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
 func HelpMatch(update *botmodels.Update) bool {
-	return strings.HasPrefix(strings.ToLower(update.Message.Text), "помощь")
+	if update.Message == nil {
+		return false
+	} else {
+		return strings.HasPrefix(strings.ToLower(update.Message.Text), "помощь")
+	}
 }
 
 func HelpHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
@@ -26,7 +31,7 @@ func HelpHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	rawQ := p.ParseQuery()
 	if len(p.Errors()) != 0 {
 		logging.Error(fmt.Sprintf("parser errors: %q\n", p.Errors()))
-		b.SendMessage(ctx, params(update, errors.Get(lexicon.EParser)))
+		b.SendMessage(ctx, shared.Params(update, errors.Get(lexicon.EParser)))
 		return
 	}
 	rawQuery, ok := (*rawQ).(*ir.HelpQueryRaw)
@@ -37,13 +42,13 @@ func HelpHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	query := rawQuery.Validate()
 	switch query.Command {
 	case models.Nil:
-		b.SendMessage(ctx, addReplyMarkup(params(update, lexicon.Get(lexicon.HelpGeneric)), keyboards.Help()))
+		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, lexicon.Get(lexicon.HelpGeneric)), keyboards.Help()))
 	case models.Lessons:
-		b.SendMessage(ctx, addReplyMarkup(params(update, lexicon.Get(lexicon.HelpLessons)), keyboards.Help()))
+		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, lexicon.Get(lexicon.HelpLessons)), keyboards.Help()))
 	case models.Bells:
-		b.SendMessage(ctx, addReplyMarkup(params(update, lexicon.Get(lexicon.HelpBells)), keyboards.Help()))
+		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, lexicon.Get(lexicon.HelpBells)), keyboards.Help()))
 	case models.Fio:
-		b.SendMessage(ctx, addReplyMarkup(params(update, lexicon.Get(lexicon.HelpFio)), keyboards.Help()))
+		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, lexicon.Get(lexicon.HelpFio)), keyboards.Help()))
 	}
 
 	logging.Trace("Done handling help request")

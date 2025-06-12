@@ -38,7 +38,9 @@ func CloseConn(conn *pgx.Conn) {
 	conn.Close(context.Background())
 }
 
-func GetStudyEntity(conn *pgx.Conn, input string) (*models.DBStudyEntity, error) {
+func GetStudyEntity(input string) (*models.DBStudyEntity, error) {
+	conn := GetConnection()
+	defer CloseConn(conn)
 	rows, err := conn.Query(context.Background(), "select * from study_entity")
 	if err != nil {
 		return nil, err
@@ -69,7 +71,9 @@ func GetStudyEntity(conn *pgx.Conn, input string) (*models.DBStudyEntity, error)
 	return nil, err
 }
 
-func GetStudyEntityByChat(conn *pgx.Conn, chatId int64) (*models.DBStudyEntity, error) {
+func GetStudyEntityByChat(chatId int64) (*models.DBStudyEntity, error) {
+	conn := GetConnection()
+	defer CloseConn(conn)
 	row := conn.QueryRow(context.Background(), "select study_entity.* from study_entity join chat on chat.study_entity_id=study_entity.id where chat.id=$1", chatId)
 	var id int
 	var api_id int
@@ -88,7 +92,9 @@ func GetStudyEntityByChat(conn *pgx.Conn, chatId int64) (*models.DBStudyEntity, 
 	return &res, nil
 }
 
-func AddChat(conn *pgx.Conn, update *botmodels.Update) error {
+func AddChat(update *botmodels.Update) error {
+	conn := GetConnection()
+	defer CloseConn(conn)
 	{
 		var existing string
 		err := conn.QueryRow(context.Background(), "select name from chat where id=$1", update.Message.Chat.ID).Scan(&existing)
@@ -103,4 +109,38 @@ func AddChat(conn *pgx.Conn, update *botmodels.Update) error {
 	username := update.Message.Chat.Username
 	_, err := conn.Exec(context.Background(), "insert into chat(id, kind, name, username, is_banned) values ($1, $2, $3, $4, false)", update.Message.Chat.ID, update.Message.Chat.Type, name, username)
 	return err
+}
+
+func GetChat(chatId int64) *models.DBChat {
+	conn := GetConnection()
+	defer CloseConn(conn)
+	row := conn.QueryRow(context.Background(), "select * from chat where id=$1", chatId)
+	var id int64
+	var kind string
+	var name string
+	var username string
+	var study_entity_id int
+	var is_banned bool
+	err := row.Scan(&id, &kind, &name, &username, &study_entity_id, &is_banned)
+	if err != nil {
+		return nil
+	}
+	res := models.DBChat{
+		Id:   id,
+		Kind: kind,
+		Name: name,
+		Username: &username,
+		StudyEntityID: &study_entity_id,
+		IsBanned: is_banned,
+	}
+	return &res
+}
+
+func AssignStudyEntity(update *botmodels.Update, studyEntity *models.DBStudyEntity) error {
+	conn := GetConnection()
+	defer CloseConn(conn)
+	chatID := shared.GetChatID(update)
+	_, err := conn.Exec(context.Background(), "update chat set study_entity_id=$1 where id=$2", studyEntity.Id, chatID)
+	return err
+
 }

@@ -18,7 +18,11 @@ import (
 )
 
 func LessonsMatch(update *models.Update) bool {
-	return strings.HasPrefix(strings.ToLower(update.Message.Text), "пары")
+	if update.Message == nil {
+		return false
+	} else {
+		return strings.HasPrefix(strings.ToLower(update.Message.Text), "пары")
+	}
 }
 
 func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
@@ -34,7 +38,7 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	raw := p.ParseQuery()
 	if len(p.Errors()) != 0 {
 		logging.Error(fmt.Sprintf("parser errors: %q\n", p.Errors()))
-		b.SendMessage(ctx, params(update, errors.Get(lexicon.EParser)))
+		b.SendMessage(ctx, shared.Params(update, errors.Get(lexicon.EParser)))
 		return
 	}
 	lqr, ok := (*raw).(*ir.LessonsQueryRaw)
@@ -43,13 +47,13 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		return
 	}
 	query, err := lqr.Validate(update.Message.Chat.ID)
-	ok = handleBotError(err, ctx, b, update)
+	ok = shared.HandleBotError(err, ctx, b, update)
 	if !ok {
 		return
 	}
 
 	resp, err := requests.FetchWeek(query)
-	ok = handleBotError(err, ctx, b, update)
+	ok = shared.HandleBotError(err, ctx, b, update)
 	if !ok {
 		return
 	}
@@ -70,6 +74,6 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		displayName,
 	)
 
-	b.SendMessage(ctx, params(update, msg))
+	b.SendMessage(ctx, shared.Params(update, msg))
 	logging.Trace("Done handling lesson request")
 }

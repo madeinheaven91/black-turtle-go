@@ -111,9 +111,7 @@ func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 	var entity *models.DBStudyEntity
 	var err error
 	if l.StudyEntityName == nil {
-		conn := db.GetConnection()
-		defer db.CloseConn(conn)
-		entity, err = db.GetStudyEntityByChat(conn, chatID)
+		entity, err = db.GetStudyEntityByChat(chatID)
 		if err != nil {
 			return nil, err
 		}
@@ -132,10 +130,7 @@ func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 }
 
 func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
-	conn := db.GetConnection()
-	defer db.CloseConn(conn)
-
-	entity, err := db.GetStudyEntity(conn, name)
+	entity, err := db.GetStudyEntity(name)
 	if err != nil {
 		return nil, err
 	}

@@ -20,6 +20,14 @@ var (
 		},
 	}
 
+
+	regCancel = botmodels.InlineKeyboardMarkup{
+		InlineKeyboard: [][]botmodels.InlineKeyboardButton{
+			{
+				{Text: "Отмена", CallbackData: "reg_cancel" },
+			},
+		},
+	}
 	help = botmodels.InlineKeyboardMarkup{
 		InlineKeyboard: [][]botmodels.InlineKeyboardButton{
 			{
@@ -27,7 +35,23 @@ var (
 			},
 		},
 	}
-	chooseGroupOrTeacher = botmodels.InlineKeyboardMarkup{}
+
+	start = botmodels.InlineKeyboardMarkup{
+		InlineKeyboard: [][]botmodels.InlineKeyboardButton{
+			{
+				{Text: "Да, давай!", CallbackData: "start_yes"},
+				{Text: "Нет, спасибо", CallbackData: "start_no"},
+			},
+		},
+	}
+	chooseGroupOrTeacher = botmodels.InlineKeyboardMarkup{
+		InlineKeyboard: [][]botmodels.InlineKeyboardButton{
+			{
+				{Text: "Группы", CallbackData: "reg_group"},
+				{Text: "Преподавателя", CallbackData: "reg_teacher"},
+			},
+		},
+	}
 )
 
 func Empty() *botmodels.ReplyKeyboardMarkup {
@@ -40,4 +64,16 @@ func Default() *botmodels.ReplyKeyboardMarkup {
 
 func Help() *botmodels.InlineKeyboardMarkup {
 	return &help
+}
+
+func Start() *botmodels.InlineKeyboardMarkup {
+	return &start
+}
+
+func ChooseGroupOrTeacher() *botmodels.InlineKeyboardMarkup {
+	return &chooseGroupOrTeacher
+}
+
+func RegCancel() *botmodels.InlineKeyboardMarkup {
+	return &regCancel
 }

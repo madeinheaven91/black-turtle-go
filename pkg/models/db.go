@@ -6,3 +6,12 @@ type DBStudyEntity struct {
 	Kind StudyEntityType
 	Name string
 }
+
+type DBChat struct {
+	Id int64 
+	Kind string 
+	Name string 
+	Username *string
+	StudyEntityID *int
+	IsBanned bool
+}
