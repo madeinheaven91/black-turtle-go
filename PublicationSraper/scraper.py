@@ -12,7 +12,7 @@ if uuid is None:
     print("Usage: UUID={uuid} python3 scraper.py")
     exit(1)
 else:
-    url = "https://schedule.mstimetables.ru/publications/" + uuid + "/"
+    url = "https://schedule.mstimetables.ru/publications/" + uuid
     api_url = "https://schedule.mstimetables.ru/api/publications/" + uuid + "/"
 
 if os.getenv("TYPE") == "GROUPS":
@@ -25,14 +25,14 @@ if os.getenv("TYPE") == "GROUPS":
 
     driver = webdriver.Firefox()
 
-    driver.get(url + "groups")
+    driver.get(url + "/#/groups")
 
     groups = driver.find_elements(By.CLASS_NAME, "link")
 
     for group in groups:
-        name =re.findall(r'\d+', group.text)[0]
+        name=group.text
         url = group.get_attribute("href")
-        id = url.split("/")[6]
+        id = url.split("/")[7]
         print(name + "," + id)
         output_file.write(name + "," + id + "\n")
 
@@ -64,3 +64,5 @@ elif os.getenv("TYPE") == "TEACHERS":
         output_file.write(last_name + "," + fst_name + "," + snd_name + "," + id + "\n")
 
     output_file.close()
+else:
+    print("TYPE not provided! (GROUPS, TEACHERS)")
