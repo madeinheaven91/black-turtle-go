@@ -6,12 +6,14 @@ import (
 
 	"github.com/madeinheaven91/black-turtle-go/internal/db"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
 type QueryRaw interface {
 	queryRaw()
 	String() string
 }
+
 // A struct for 'пары' command.
 //
 // Is produced by Parser. StudyEntityName could be nil. Either no, Date, Day or Day + Week fields for TimeFrame are not nil, otherwise parser will throw an error.
@@ -59,44 +61,67 @@ func (l *LessonsQueryRaw) Date() *time.Time {
 		return l.TimeFrame.Date
 	} else if l.TimeFrame.Day != nil {
 		var res time.Time
-		currWeekday := int(time.Now().Weekday())
+		var inc int
+		currWeekday := shared.NormalizeWeekday(time.Now().Weekday())
 		switch *l.TimeFrame.Day {
 		case "сегодня":
-			res = time.Now()
+			inc = 0
 		case "завтра":
-			res = time.Now().AddDate(0, 0, 1)
+			inc = 1
 		case "послезавтра":
-			res = time.Now().AddDate(0, 0, 2)
+			inc = 2
 		case "вчера":
-			res = time.Now().AddDate(0, 0, -1)
+			inc = -1
 		case "позавчера":
-			res = time.Now().AddDate(0, 0, -2)
+			inc = -2
 		case "пн", "понедельник":
-			res = time.Now().AddDate(0, 0, 1-currWeekday)
+			// FIXME: these if statements should be avoidable, but i cant figure out how rn
+			inc = 0 - currWeekday
+			if currWeekday > 0 && l.TimeFrame.Week == nil {
+				inc += 7
+			}
 		case "вт", "вторник":
-			res = time.Now().AddDate(0, 0, 2-currWeekday)
+			inc = 1 - currWeekday
+			if currWeekday > 1 && l.TimeFrame.Week == nil {
+				inc += 7
+			}
 		case "ср", "среда":
-			res = time.Now().AddDate(0, 0, 3-currWeekday)
+			inc = 2 - currWeekday
+			if currWeekday > 2 && l.TimeFrame.Week == nil {
+				inc += 7
+			}
 		case "чт", "четверг":
-			res = time.Now().AddDate(0, 0, 4-currWeekday)
+			inc = 3 - currWeekday
+			if currWeekday > 3 && l.TimeFrame.Week == nil {
+				inc += 7
+			}
 		case "пт", "пятница":
-			res = time.Now().AddDate(0, 0, 5-currWeekday)
+			inc = 4 - currWeekday
+			if currWeekday > 4 && l.TimeFrame.Week == nil {
+				inc += 7
+			}
 		case "сб", "суббота":
-			res = time.Now().AddDate(0, 0, 6-currWeekday)
+			inc = 5 - currWeekday
+			if currWeekday > 5 && l.TimeFrame.Week == nil {
+				inc += 7
+			}
 		case "вс", "воскресенье":
-			res = time.Now().AddDate(0, 0, 7-currWeekday)
+			inc = 6 - currWeekday
+			if currWeekday > 6 && l.TimeFrame.Week == nil {
+				inc += 7
+			}
 		}
 
 		if l.TimeFrame.Week != nil {
 			switch *l.TimeFrame.Week {
 			case "след", "следующая", "следующий":
-				res = res.AddDate(0, 0, 7)
-			case "пред", "предыдущая", "предыдущий":
-				res = res.AddDate(0, 0, -7)
-			case "эта", "этот":
-			default:
+				inc += 7
+			case "пред", "предыдущая", "предыдущий", "прош", "прошлый", "прошлая":
+				inc -= 7
 			}
 		}
+
+		res = time.Now().AddDate(0, 0, inc)
 		return &res
 	} else {
 		res := time.Now()
@@ -107,7 +132,7 @@ func (l *LessonsQueryRaw) Date() *time.Time {
 func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 	var res LessonsQuery
 	res.Date = *l.Date()
-	
+
 	var entity *models.DBStudyEntity
 	var err error
 	if l.StudyEntityName == nil {

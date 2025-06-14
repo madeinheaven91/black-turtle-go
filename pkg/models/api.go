@@ -13,10 +13,11 @@ type APIResponse struct {
 	Lessons   []APILesson `json:"lessons"`
 }
 
+// FIXME: вроде работает, но я не понимаю что тут происходит
 func (r *APIResponse) IntoWeek() SchoolWeek {
 	if r.Group != nil {
 		// deser group
-		lessons := make(map[int][]Lesson, 0)
+		lessons := make(map[int][]Lesson)
 		for _, l := range r.Lessons {
 			var teacher *string
 			var lessonType string
@@ -41,7 +42,7 @@ func (r *APIResponse) IntoWeek() SchoolWeek {
 			})
 		}
 
-		days := make([]SchoolDay, len(lessons))
+		days := make([]SchoolDay, 7)
 		for k, v := range lessons {
 			sort.Slice(v, func(i, j int) bool {
 				return v[i].Index < v[j].Index
@@ -66,7 +67,7 @@ func (r *APIResponse) IntoWeek() SchoolWeek {
 		return res
 	} else if r.Teacher != nil {
 		// deser teacher
-		lessons := make(map[int][]Lesson, 0)
+		lessons := make(map[int][]Lesson)
 		for _, l := range r.Lessons {
 			var group *string
 			var lessonType string
@@ -91,7 +92,7 @@ func (r *APIResponse) IntoWeek() SchoolWeek {
 			})
 		}
 
-		days := make([]SchoolDay, len(lessons))
+		days := make([]SchoolDay, 7)
 		for k, v := range lessons {
 			sort.Slice(v, func(i, j int) bool {
 				return v[i].Index < v[j].Index
