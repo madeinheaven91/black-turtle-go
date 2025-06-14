@@ -61,9 +61,8 @@ func (f *FSM) Middleware(next bot.HandlerFunc) bot.HandlerFunc {
 			if update.CallbackQuery.Data == "reg_cancel" {
 				f.SetState(chatID, fsm.RegCancel)
 			}
-		} 
+		}
 		currState, ok := f.GetState(chatID)
-
 
 		if ok {
 			if handler, o := f.handlers[currState]; o {
@@ -103,7 +102,7 @@ func (fh *FSMHandler) RegGroupEnter(ctx context.Context, b *bot.Bot, update *bot
 		} else {
 			fh.FSM.End(chatID)
 			b.SendMessage(ctx, shared.AddReplyMarkup(
-				shared.Params(update, lexicon.Get(lexicon.RegGroupSelected)), 
+				shared.Params(update, lexicon.Get(lexicon.RegGroupSelected)),
 				keyboards.Default(),
 			))
 			logging.Info("%d registered with %s", chatID, studyEntity.Name)
@@ -127,7 +126,7 @@ func (fh *FSMHandler) RegTeacherEnter(ctx context.Context, b *bot.Bot, update *b
 		} else {
 			fh.FSM.End(chatID)
 			b.SendMessage(ctx, shared.AddReplyMarkup(
-				shared.Params(update, lexicon.Get(lexicon.RegTeacherSelected)), 
+				shared.Params(update, lexicon.Get(lexicon.RegTeacherSelected)),
 				keyboards.Default(),
 			))
 			logging.Info("%d registered with %s", chatID, studyEntity.Name)
@@ -179,18 +178,18 @@ func (fh *FSMHandler) RegCancel(ctx context.Context, b *bot.Bot, update *botmode
 	logging.Trace("%d cancelled registration", shared.GetChatID(update))
 	fh.FSM.End(update.CallbackQuery.Message.Message.Chat.ID)
 	b.EditMessageText(ctx, &bot.EditMessageTextParams{
-		ChatID: update.CallbackQuery.Message.Message.Chat.ID,
+		ChatID:    update.CallbackQuery.Message.Message.Chat.ID,
 		MessageID: update.CallbackQuery.Message.Message.ID,
-		Text: lexicon.Get(lexicon.RegCancel),
+		Text:      lexicon.Get(lexicon.RegCancel),
 		ParseMode: botmodels.ParseModeHTML,
 	})
 	b.EditMessageReplyMarkup(ctx, &bot.EditMessageReplyMarkupParams{
-		ChatID: update.CallbackQuery.Message.Message.Chat.ID,
-		MessageID: update.CallbackQuery.Message.Message.ID,
+		ChatID:      update.CallbackQuery.Message.Message.Chat.ID,
+		MessageID:   update.CallbackQuery.Message.Message.ID,
 		ReplyMarkup: keyboards.Empty(),
 	})
 	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
 		CallbackQueryID: update.CallbackQuery.ID,
-		ShowAlert: false,
+		ShowAlert:       false,
 	})
 }

@@ -17,6 +17,7 @@ import (
 )
 
 func main() {
+	// Reading env variables and initializing config and logging
 	envFile, err := godotenv.Read(".env")
 	if err != nil {
 		logging.Critical("%s\n", err)
@@ -28,6 +29,7 @@ func main() {
 	config.InitFromEnv()
 	logging.InitLoggers()
 
+	// Initializing registration FSM
 	regFSM := middleware.NewFSM()
 	regFSMHandler := middleware.NewFSMHandler(regFSM)
 	regFSM.RegisterHandler(fsm.EnterGroup, regFSMHandler.RegGroupEnter)
@@ -37,10 +39,6 @@ func main() {
 	opts := []bot.Option{
 		// empty handler so that stdout isnt being cluttered
 		bot.WithDefaultHandler(func(ctx context.Context, bot *bot.Bot, update *models.Update) {}),
-		bot.WithCallbackQueryDataHandler("start_yes", bot.MatchTypeExact, handlers.StartYes),
-		bot.WithCallbackQueryDataHandler("start_no", bot.MatchTypeExact, handlers.StartNo),
-		bot.WithCallbackQueryDataHandler("reg_group", bot.MatchTypeExact, regFSMHandler.RegGroupStart),
-		bot.WithCallbackQueryDataHandler("reg_teacher", bot.MatchTypeExact, regFSMHandler.RegTeacherStart),
 		bot.WithMiddlewares(regFSM.Middleware),
 	}
 
@@ -57,9 +55,17 @@ func main() {
 	}()
 
 	logging.Info("Starting bot")
+
+	// Registering handlers
 	b.RegisterHandlerMatchFunc(handlers.LessonsMatch, handlers.LessonsHandler, middleware.LogRequest, middleware.DbSync)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "start", bot.MatchTypeCommand, handlers.StartHandler, middleware.LogRequest, middleware.DbSync)
 	b.RegisterHandlerMatchFunc(handlers.HelpMatch, handlers.HelpHandler, middleware.LogRequest, middleware.DbSync)
-	b.RegisterHandlerMatchFunc(handlers.RegistrationMatch, handlers.Registration, middleware.LogRequest, middleware.DbSync)
+
+	b.RegisterHandlerMatchFunc(handlers.RegistrationMatch, handlers.Registration, middleware.DbSync, middleware.LogRequest)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "start_yes", bot.MatchTypeExact, handlers.StartYes)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "start_no", bot.MatchTypeExact, handlers.StartNo)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "reg_group", bot.MatchTypeExact, regFSMHandler.RegGroupStart)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "reg_teacher", bot.MatchTypeExact, regFSMHandler.RegTeacherStart)
+
 	b.Start(ctx)
 }

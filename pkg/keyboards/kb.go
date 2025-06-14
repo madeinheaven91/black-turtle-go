@@ -20,11 +20,10 @@ var (
 		},
 	}
 
-
 	regCancel = botmodels.InlineKeyboardMarkup{
 		InlineKeyboard: [][]botmodels.InlineKeyboardButton{
 			{
-				{Text: "Отмена", CallbackData: "reg_cancel" },
+				{Text: "Отмена", CallbackData: "reg_cancel"},
 			},
 		},
 	}

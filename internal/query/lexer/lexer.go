@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"bytes"
+	"strings"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/query/token"
 )
@@ -14,7 +15,8 @@ type Lexer struct {
 }
 
 func New(input string) *Lexer {
-	l := &Lexer{input: input}
+	// FIXME: shouldn't be necessary, dont know why it crashes without the string processing
+	l := &Lexer{input: strings.TrimSpace(strings.ToLower(input))}
 	l.readChar()
 	return l
 }

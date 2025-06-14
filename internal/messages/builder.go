@@ -52,12 +52,12 @@ func BuildDayMsg(day mymodels.SchoolDay, date time.Time, entityName string) stri
 			} else {
 				sb.WriteString(fmt.Sprintf("📖 <b>%s (%s)</b>\n", lesson.Name, lesson.Type))
 			}
-			var teacher = "<i>Преподаватель не указан</i>"
+			teacher := "<i>Преподаватель не указан</i>"
 			if lesson.RelatedTo != nil {
 				teacher = *lesson.RelatedTo
 			}
 			sb.WriteString(fmt.Sprintf("🎓 %s\n", teacher))
-			var cabinet = "<i>Кабинет не указан</i>"
+			cabinet := "<i>Кабинет не указан</i>"
 			if lesson.Cabinet != nil {
 				cabinet = *lesson.Cabinet
 			}

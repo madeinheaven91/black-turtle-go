@@ -56,10 +56,10 @@ func GetStudyEntity(input string) (*models.DBStudyEntity, error) {
 		}
 		if strings.Contains(strings.ToLower(name), strings.ToLower(input)) {
 			res := models.DBStudyEntity{
-				Id:     id,
-				Api_id: api_id,
-				Kind:   models.StudyEntityType(kind),
-				Name:   name,
+				ID:    id,
+				ApiID: api_id,
+				Kind:  models.StudyEntityType(kind),
+				Name:  name,
 			}
 			return &res, nil
 		}
@@ -84,10 +84,10 @@ func GetStudyEntityByChat(chatId int64) (*models.DBStudyEntity, error) {
 		return nil, err
 	}
 	res := models.DBStudyEntity{
-		Id:     id,
-		Api_id: api_id,
-		Kind:   models.StudyEntityType(kind),
-		Name:   name,
+		ID:    id,
+		ApiID: api_id,
+		Kind:  models.StudyEntityType(kind),
+		Name:  name,
 	}
 	return &res, nil
 }
@@ -126,12 +126,12 @@ func GetChat(chatId int64) *models.DBChat {
 		return nil
 	}
 	res := models.DBChat{
-		Id:   id,
-		Kind: kind,
-		Name: name,
-		Username: &username,
+		ID:            id,
+		Kind:          kind,
+		Name:          name,
+		Username:      &username,
 		StudyEntityID: &study_entity_id,
-		IsBanned: is_banned,
+		IsBanned:      is_banned,
 	}
 	return &res
 }
@@ -140,7 +140,6 @@ func AssignStudyEntity(update *botmodels.Update, studyEntity *models.DBStudyEnti
 	conn := GetConnection()
 	defer CloseConn(conn)
 	chatID := shared.GetChatID(update)
-	_, err := conn.Exec(context.Background(), "update chat set study_entity_id=$1 where id=$2", studyEntity.Id, chatID)
+	_, err := conn.Exec(context.Background(), "update chat set study_entity_id=$1 where id=$2", studyEntity.ID, chatID)
 	return err
-
 }

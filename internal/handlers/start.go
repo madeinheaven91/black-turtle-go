@@ -15,10 +15,10 @@ import (
 func StartHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	chat := db.GetChat(update.Message.Chat.ID)
 	if chat != nil {
-		logging.Info("Chat already exists")
+		logging.Info("Chat (%d) already exists", chat.ID)
 		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, lexicon.Get(lexicon.Start)), keyboards.Start()))
 	} else {
-		logging.Info("New chat!")
+		logging.Info("New chat (%d)!", update.Message.Chat.ID)
 		db.AddChat(update)
 		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, "Добавил"), keyboards.Default()))
 	}
@@ -26,37 +26,37 @@ func StartHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 
 func StartNo(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	b.EditMessageText(ctx, &bot.EditMessageTextParams{
-		ChatID: update.CallbackQuery.Message.Message.Chat.ID,
+		ChatID:    update.CallbackQuery.Message.Message.Chat.ID,
 		MessageID: update.CallbackQuery.Message.Message.ID,
-		Text: lexicon.Get(lexicon.RegCancel),
+		Text:      lexicon.Get(lexicon.RegCancel),
 		ParseMode: botmodels.ParseModeHTML,
 	})
 	b.EditMessageReplyMarkup(ctx, &bot.EditMessageReplyMarkupParams{
-		ChatID: update.CallbackQuery.Message.Message.Chat.ID,
-		MessageID: update.CallbackQuery.Message.Message.ID,
+		ChatID:      update.CallbackQuery.Message.Message.Chat.ID,
+		MessageID:   update.CallbackQuery.Message.Message.ID,
 		ReplyMarkup: keyboards.Empty(),
 	})
 	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
 		CallbackQueryID: update.CallbackQuery.ID,
-		ShowAlert: false,
+		ShowAlert:       false,
 	})
-	logging.Trace("cancelled registration")
+	logging.Trace("Chat (%d) cancelled registration", update.CallbackQuery.Message.Message.Chat.ID)
 }
 
 func StartYes(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	b.EditMessageText(ctx, &bot.EditMessageTextParams{
-		ChatID: update.CallbackQuery.Message.Message.Chat.ID,
+		ChatID:    update.CallbackQuery.Message.Message.Chat.ID,
 		MessageID: update.CallbackQuery.Message.Message.ID,
-		Text: lexicon.Get(lexicon.RegGroupOrTeacher),
+		Text:      lexicon.Get(lexicon.RegGroupOrTeacher),
 		ParseMode: botmodels.ParseModeHTML,
 	})
 	b.EditMessageReplyMarkup(ctx, &bot.EditMessageReplyMarkupParams{
-		ChatID: update.CallbackQuery.Message.Message.Chat.ID,
-		MessageID: update.CallbackQuery.Message.Message.ID,
+		ChatID:      update.CallbackQuery.Message.Message.Chat.ID,
+		MessageID:   update.CallbackQuery.Message.Message.ID,
 		ReplyMarkup: keyboards.ChooseGroupOrTeacher(),
 	})
 	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
 		CallbackQueryID: update.CallbackQuery.ID,
-		ShowAlert: false,
+		ShowAlert:       false,
 	})
 }

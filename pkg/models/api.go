@@ -132,12 +132,12 @@ type APIUnionGroup struct {
 }
 
 type APIGroup struct {
-	Id   int    `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type APISubject struct {
-	Id   int    `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 

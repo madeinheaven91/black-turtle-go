@@ -1,14 +1,14 @@
 package models
 
 type DBStudyEntity struct {
-	Id int
-	Api_id int
+	ID int
+	ApiID int
 	Kind StudyEntityType
 	Name string
 }
 
 type DBChat struct {
-	Id int64 
+	ID int64 
 	Kind string 
 	Name string 
 	Username *string

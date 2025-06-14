@@ -72,11 +72,10 @@ func HandleBotError(err error, ctx context.Context, b *bot.Bot, update *botmodel
 
 func Params(update *botmodels.Update, text string) *bot.SendMessageParams {
 	return &bot.SendMessageParams{
-		ChatID: update.Message.Chat.ID,
-		Text: text,
+		ChatID:    update.Message.Chat.ID,
+		Text:      text,
 		ParseMode: botmodels.ParseModeHTML,
 	}
-
 }
 
 func AddReplyMarkup(params *bot.SendMessageParams, kb botmodels.ReplyMarkup) *bot.SendMessageParams {

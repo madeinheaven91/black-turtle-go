@@ -9,10 +9,6 @@ import (
 	"github.com/madeinheaven91/black-turtle-go/pkg/keyboards"
 	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
-	// "github.com/madeinheaven91/black-turtle-go/internal/db"
-	// "github.com/madeinheaven91/black-turtle-go/pkg/keyboards"
-	// "github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
-	// "github.com/madeinheaven91/black-turtle-go/pkg/logging"
 )
 
 func RegistrationMatch(update *botmodels.Update) bool {
@@ -31,4 +27,3 @@ func Registration(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 		),
 	)
 }
-

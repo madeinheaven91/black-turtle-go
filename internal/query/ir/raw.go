@@ -124,7 +124,7 @@ func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 
 	res.StudyEntityName = entity.Name
 	res.StudyEntityType = entity.Kind
-	res.StudyEntityApiId = entity.Api_id
+	res.StudyEntityApiId = entity.ApiID
 
 	return &res, nil
 }
