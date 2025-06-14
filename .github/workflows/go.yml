@@ -21,5 +21,6 @@ jobs:
       run: go build -C ./cmd/bot -v -o ../../bot
 
     - name: Test
-      run: go test -C ./internal/query/parser -v
-      run: go test -C ./internal/query/lexer -v
+      run: |
+        go test -C ./internal/query/parser -v
+        go test -C ./internal/query/lexer -v
