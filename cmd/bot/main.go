@@ -35,6 +35,7 @@ func main() {
 	regFSM.RegisterHandler(fsm.EnterGroup, regFSMHandler.RegGroupEnter)
 	regFSM.RegisterHandler(fsm.EnterTeacher, regFSMHandler.RegTeacherEnter)
 	regFSM.RegisterHandler(fsm.RegCancel, regFSMHandler.RegCancel)
+	regFSM.RegisterHandler(fsm.MultipleChoice, regFSMHandler.RegMultipleChoice)
 
 	opts := []bot.Option{
 		// empty handler so that stdout isnt being cluttered
@@ -66,6 +67,7 @@ func main() {
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "start_no", bot.MatchTypeExact, handlers.StartNo)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "reg_group", bot.MatchTypeExact, regFSMHandler.RegGroupStart)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "reg_teacher", bot.MatchTypeExact, regFSMHandler.RegTeacherStart)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "choose", bot.MatchTypePrefix, regFSMHandler.RegMultipleChoice)
 
 	b.Start(ctx)
 }

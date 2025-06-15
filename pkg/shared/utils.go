@@ -71,8 +71,9 @@ func HandleBotError(err error, ctx context.Context, b *bot.Bot, update *botmodel
 }
 
 func Params(update *botmodels.Update, text string) *bot.SendMessageParams {
+	chatID := GetChatID(update)
 	return &bot.SendMessageParams{
-		ChatID:    update.Message.Chat.ID,
+		ChatID:    chatID,
 		Text:      text,
 		ParseMode: botmodels.ParseModeHTML,
 	}

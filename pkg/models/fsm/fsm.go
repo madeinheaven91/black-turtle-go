@@ -16,4 +16,5 @@ const (
 	EnterGroup State = iota
 	EnterTeacher
 	RegCancel
+	MultipleChoice
 )

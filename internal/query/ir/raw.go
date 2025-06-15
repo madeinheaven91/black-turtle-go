@@ -155,11 +155,12 @@ func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 }
 
 func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
-	entity, err := db.GetStudyEntity(name)
-	if err != nil {
+	entities, err := db.GetStudyEntities(name)
+	if err != nil || len(entities) == 0 {
 		return nil, err
 	}
-	return entity, nil
+	// FIXME: maybe shouldnt be that way
+	return &entities[0], nil
 }
 
 type HelpQueryRaw struct {

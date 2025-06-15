@@ -2,15 +2,16 @@ package messages
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
-	mymodels "github.com/madeinheaven91/black-turtle-go/pkg/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
 // TODO:
-func BuildDayMsg(day mymodels.SchoolDay, date time.Time, entityName string) string {
+func BuildDayMsg(day models.SchoolDay, date time.Time, entityName string) string {
 	var sb strings.Builder
 	sb.WriteString("<b>")
 	sb.WriteString(entityName)
@@ -64,5 +65,36 @@ func BuildDayMsg(day mymodels.SchoolDay, date time.Time, entityName string) stri
 			sb.WriteString(fmt.Sprintf("🔑 %s\n\n", cabinet))
 		}
 	}
+	return sb.String()
+}
+
+func BuildMultipleChoices(kind models.StudyEntityType, choices []models.DBStudyEntity) string {
+	var sb strings.Builder
+	sb.WriteString("❔ Найдено несколько ")
+	switch kind {
+	case models.Group:
+		sb.WriteString("групп:")
+		sb.WriteByte('\n')
+	case models.Teacher:
+		sb.WriteString("преподавателей:")
+		sb.WriteByte('\n')
+	}
+	sb.WriteString("<b>")
+	for i, choice := range choices {
+		sb.WriteByte('\n')
+		sb.WriteString(strconv.Itoa(i + 1))
+		sb.WriteString(". ")
+		sb.WriteString(choice.Name)
+	}
+	sb.WriteByte('\n')
+	sb.WriteByte('\n')
+	sb.WriteString("</b>Выберите ")
+	switch kind {
+	case models.Group:
+		sb.WriteString("группу ")
+	case models.Teacher:
+		sb.WriteString("преподавателя ")
+	}
+	sb.WriteString("из списка ниже")
 	return sb.String()
 }

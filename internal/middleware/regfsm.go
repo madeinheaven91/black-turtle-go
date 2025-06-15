@@ -2,12 +2,15 @@ package middleware
 
 import (
 	"context"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/go-telegram/bot"
 	botmodels "github.com/go-telegram/bot/models"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/db"
+	"github.com/madeinheaven91/black-turtle-go/internal/messages"
 	"github.com/madeinheaven91/black-turtle-go/pkg/keyboards"
 	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
@@ -87,15 +90,24 @@ func NewFSMHandler(fsm *FSM) *FSMHandler {
 }
 
 func (fh *FSMHandler) RegGroupEnter(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
-	studyEntity, err := db.GetStudyEntity(update.Message.Text)
 	chatID := shared.GetChatID(update)
-	if err != nil || studyEntity.Kind != models.Group {
+	// Get study entities by name and filter groups
+	tmp, err := db.GetStudyEntities(update.Message.Text)
+	studyEntities := make([]models.DBStudyEntity, 0, 1)
+	for _, entity := range tmp {
+		if entity.Kind == models.Group {
+			studyEntities = append(studyEntities, entity)
+		}
+	}
+
+	if err != nil || len(studyEntities) == 0 {
 		logging.Trace("%d unknown group entered (%s)", chatID, update.Message.Text)
 		b.SendMessage(ctx, shared.AddReplyMarkup(
 			shared.Params(update, lexicon.Get(lexicon.RegGroupNotFound)),
 			keyboards.RegCancel(),
 		))
-	} else {
+	} else if len(studyEntities) == 1 {
+		studyEntity := &studyEntities[0]
 		err = db.AssignStudyEntity(update, studyEntity)
 		if err != nil {
 			shared.HandleBotError(err, ctx, b, update)
@@ -107,19 +119,33 @@ func (fh *FSMHandler) RegGroupEnter(ctx context.Context, b *bot.Bot, update *bot
 			))
 			logging.Info("%d registered with %s", chatID, studyEntity.Name)
 		}
+	} else {
+		b.SendMessage(ctx, shared.AddReplyMarkup(
+			shared.Params(update, messages.BuildMultipleChoices(models.Group, studyEntities)),
+			keyboards.MultipleChoices(models.Group, studyEntities),
+		))
+		fh.FSM.SetState(chatID, fsm.MultipleChoice)
 	}
 }
 
 func (fh *FSMHandler) RegTeacherEnter(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
-	studyEntity, err := db.GetStudyEntity(update.Message.Text)
 	chatID := shared.GetChatID(update)
-	if err != nil || studyEntity.Kind != models.Teacher {
+	tmp, err := db.GetStudyEntities(update.Message.Text)
+	studyEntities := make([]models.DBStudyEntity, 0, 1)
+	for _, entity := range tmp {
+		if entity.Kind == models.Teacher {
+			studyEntities = append(studyEntities, entity)
+		}
+	}
+
+	if err != nil || len(studyEntities) == 0 {
 		logging.Trace("%d unknown teacher entered (%s)", chatID, update.Message.Text)
 		b.SendMessage(ctx, shared.AddReplyMarkup(
 			shared.Params(update, lexicon.Get(lexicon.RegTeacherNotFound)),
 			keyboards.RegCancel(),
 		))
-	} else {
+	} else if len(studyEntities) == 1 {
+		studyEntity := &studyEntities[0]
 		err = db.AssignStudyEntity(update, studyEntity)
 		if err != nil {
 			shared.HandleBotError(err, ctx, b, update)
@@ -131,6 +157,12 @@ func (fh *FSMHandler) RegTeacherEnter(ctx context.Context, b *bot.Bot, update *b
 			))
 			logging.Info("%d registered with %s", chatID, studyEntity.Name)
 		}
+	} else {
+		b.SendMessage(ctx, shared.AddReplyMarkup(
+			shared.Params(update, messages.BuildMultipleChoices(models.Teacher, studyEntities)),
+			keyboards.MultipleChoices(models.Teacher, studyEntities),
+		))
+		fh.FSM.SetState(chatID, fsm.MultipleChoice)
 	}
 }
 
@@ -192,4 +224,50 @@ func (fh *FSMHandler) RegCancel(ctx context.Context, b *bot.Bot, update *botmode
 		CallbackQueryID: update.CallbackQuery.ID,
 		ShowAlert:       false,
 	})
+}
+
+func (fh *FSMHandler) RegMultipleChoice(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
+	callbackMessage := strings.Split(update.CallbackQuery.Data, "_")
+	logging.Trace("%#v", callbackMessage)
+	id, err := strconv.Atoi(callbackMessage[2])
+	if err != nil {
+		logging.Error("incorrect multiple choice message (wrong id): %s", update.CallbackQuery.Data)
+		b.SendMessage(ctx, shared.Params(update, lexicon.Error(lexicon.EGeneral)))
+		fh.FSM.End(update.CallbackQuery.Message.Message.Chat.ID)
+		return
+	}
+	entity, err := db.GetStudyEntityByID(id)
+	if err != nil {
+		logging.Error("incorrect multiple choice message (wrong id): %s", update.CallbackQuery.Data)
+		b.SendMessage(ctx, shared.Params(update, lexicon.Error(lexicon.EGeneral)))
+		fh.FSM.End(update.CallbackQuery.Message.Message.Chat.ID)
+		return
+	}
+	if err = db.AssignStudyEntity(update, entity); err != nil {
+		logging.Error("couldn't assign study entity (%d) to chat %d", entity.ID, update.CallbackQuery.Message.Message.Chat.ID)
+		b.SendMessage(ctx, shared.Params(update, lexicon.Error(lexicon.EGeneral)))
+		fh.FSM.End(update.CallbackQuery.Message.Message.Chat.ID)
+		return
+	}
+	switch callbackMessage[1] {
+	case "group":
+		b.SendMessage(ctx, shared.AddReplyMarkup(
+			shared.Params(update, lexicon.Get(lexicon.RegGroupSelected)),
+			keyboards.Default(),
+		))
+	case "teacher":
+		b.SendMessage(ctx, shared.AddReplyMarkup(
+			shared.Params(update, lexicon.Get(lexicon.RegTeacherSelected)),
+			keyboards.Default(),
+		))
+	default:
+		logging.Error("incorrect multiple choice message (wrong type): %s", update.CallbackQuery.Data)
+		b.SendMessage(ctx, shared.Params(update, lexicon.Error(lexicon.EGeneral)))
+	}
+
+	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
+		CallbackQueryID: update.CallbackQuery.ID,
+		ShowAlert:       false,
+	})
+	fh.FSM.End(update.CallbackQuery.Message.Message.Chat.ID)
 }

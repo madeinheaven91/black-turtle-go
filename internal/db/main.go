@@ -38,13 +38,14 @@ func CloseConn(conn *pgx.Conn) {
 	conn.Close(context.Background())
 }
 
-func GetStudyEntity(input string) (*models.DBStudyEntity, error) {
+func GetStudyEntities(input string) ([]models.DBStudyEntity, error) {
 	conn := GetConnection()
 	defer CloseConn(conn)
 	rows, err := conn.Query(context.Background(), "select * from study_entity")
 	if err != nil {
 		return nil, err
 	}
+	res := make([]models.DBStudyEntity, 0, 1)
 	for rows.Next() {
 		var id int
 		var api_id int
@@ -55,20 +56,17 @@ func GetStudyEntity(input string) (*models.DBStudyEntity, error) {
 			return nil, err
 		}
 		if strings.Contains(strings.ToLower(name), strings.ToLower(input)) {
-			res := models.DBStudyEntity{
+			new := models.DBStudyEntity{
 				ID:    id,
 				ApiID: api_id,
 				Kind:  models.StudyEntityType(kind),
 				Name:  name,
 			}
-			return &res, nil
+			res = append(res, new)
 		}
 	}
 
-	err = errors.From(fmt.Errorf("study entity not found"), "db error", lexicon.EStudyEntityNotFound, map[string]any{
-		"studyEntityName": input,
-	})
-	return nil, err
+	return res, nil
 }
 
 func GetStudyEntityByChat(chatId int64) (*models.DBStudyEntity, error) {
@@ -81,6 +79,27 @@ func GetStudyEntityByChat(chatId int64) (*models.DBStudyEntity, error) {
 	var name string
 	err := row.Scan(&id, &api_id, &kind, &name)
 	if err != nil {
+		return nil, err
+	}
+	res := models.DBStudyEntity{
+		ID:    id,
+		ApiID: api_id,
+		Kind:  models.StudyEntityType(kind),
+		Name:  name,
+	}
+	return &res, nil
+}
+
+func GetStudyEntityByID(id int) (*models.DBStudyEntity, error) {
+	conn := GetConnection()
+	defer CloseConn(conn)
+	row := conn.QueryRow(context.Background(), "select api_id, kind, name from study_entity where id = $1;", id)
+	var api_id int
+	var kind string
+	var name string
+	err := row.Scan(&api_id, &kind, &name)
+	if err != nil {
+		logging.Error(err.Error())
 		return nil, err
 	}
 	res := models.DBStudyEntity{

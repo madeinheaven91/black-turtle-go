@@ -1,7 +1,11 @@
 package keyboards
 
 import (
+	"fmt"
+	"strconv"
+
 	botmodels "github.com/go-telegram/bot/models"
+	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 )
 
 var (
@@ -75,4 +79,26 @@ func ChooseGroupOrTeacher() *botmodels.InlineKeyboardMarkup {
 
 func RegCancel() *botmodels.InlineKeyboardMarkup {
 	return &regCancel
+}
+
+func MultipleChoices(kind models.StudyEntityType, choices []models.DBStudyEntity) *botmodels.InlineKeyboardMarkup {
+	// NOTE: intended to be used only with multiple choice message builder, so
+	// the order of entities is meant to be preserved. Thats why there are no additional
+	// checks
+	keyboard := make([][]botmodels.InlineKeyboardButton, 0, 1)
+	row := 0
+	for i, choice := range choices {
+		if len(keyboard) <= row {
+			keyboard = append(keyboard, make([]botmodels.InlineKeyboardButton, 0))
+		}
+		keyboard[row] = append(keyboard[row], botmodels.InlineKeyboardButton{
+			Text:         strconv.Itoa(i + 1),
+			CallbackData: fmt.Sprintf("choose_%s_%d", kind, choice.ID),
+		})
+		if len(keyboard[row]) == 8 {
+			row++
+		}
+	}
+	res := botmodels.InlineKeyboardMarkup{InlineKeyboard: keyboard}
+	return &res
 }
