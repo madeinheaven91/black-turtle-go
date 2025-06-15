@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
@@ -96,5 +97,37 @@ func BuildMultipleChoices(kind models.StudyEntityType, choices []models.DBStudyE
 		sb.WriteString("преподавателя ")
 	}
 	sb.WriteString("из списка ниже")
+	return sb.String()
+}
+
+func BuildFIOMessage(teachers []models.DBStudyEntity) string {
+	var sb strings.Builder
+	switch len(teachers) {
+	case 0:
+		sb.WriteString(lexicon.Get(lexicon.RegTeacherNotFound))
+	case 1:
+		sb.WriteString("👩‍🏫 Найден преподаватель:")
+		sb.WriteByte('\n')
+		sb.WriteByte('\n')
+		sb.WriteString("<b>")
+		sb.WriteString(teachers[0].Name)
+		sb.WriteString("</b>")
+		sb.WriteByte('\n')
+		sb.WriteByte('\n')
+		sb.WriteString("<i>Если вы не нашли нужного преподавателя, пишите в техподдержку.</i>")
+	default:
+		sb.WriteString("👩‍🏫 Найдено несколько преподавателей:")
+		sb.WriteByte('\n')
+		sb.WriteByte('\n')
+		sb.WriteString("<b>")
+		for i, teacher := range teachers {
+			sb.WriteString("")
+			sb.WriteString(strconv.Itoa(i+1) + ". " + teacher.Name)
+			sb.WriteByte('\n')
+		}
+		sb.WriteString("</b>")
+		sb.WriteByte('\n')
+		sb.WriteString("<i>Если вы не нашли нужного преподавателя, пишите в техподдержку.</i>")
+	}
 	return sb.String()
 }

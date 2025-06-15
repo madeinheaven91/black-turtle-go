@@ -45,6 +45,8 @@ func (p *Parser) ParseQuery() *ir.QueryRaw {
 		res = p.parseLessonQuery()
 	case token.HELP:
 		res = p.parseHelpQuery()
+	case token.FIO:
+		res = p.parseFioQuery()
 	default:
 		logging.Warning("couldn't parse query starting with token %s of type %s", p.curToken.Literal, p.curToken.Type)
 		return nil
@@ -152,6 +154,22 @@ func (p *Parser) parseHelpQuery() *ir.HelpQueryRaw {
 		query.Command = models.Bells
 	default:
 		p.errors = append(p.errors, fmt.Sprintf("unexpected command %v", p.peekToken.Literal))
+		return nil
+	}
+	return &query
+}
+
+func (p *Parser) parseFioQuery() *ir.FioQueryRaw {
+	query := ir.FioQueryRaw{}
+	if p.peekToken.Type == token.EOF {
+		p.errors = append(p.errors, "expected name, got EOF")
+		return nil
+	}
+	switch p.peekToken.Type {
+	case token.NAME:
+		query.Name = p.peekToken.Literal
+	default:
+		p.errors = append(p.errors, fmt.Sprintf("expected name, got %v", p.peekToken.Type))
 		return nil
 	}
 	return &query

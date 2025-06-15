@@ -43,7 +43,7 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	}
 	lqr, ok := (*raw).(*ir.LessonsQueryRaw)
 	if !ok {
-		logging.Error("can't convert *QueryRaw into *LessonsQueryRaw, wtf??")
+		logging.Critical("can't convert *QueryRaw into *LessonsQueryRaw, wtf??")
 		return
 	}
 	query, err := lqr.Validate(update.Message.Chat.ID)

@@ -36,7 +36,7 @@ func HelpHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	}
 	rawQuery, ok := (*rawQ).(*ir.HelpQueryRaw)
 	if !ok {
-		logging.Error("can't convert *QueryRaw into *HelpQueryRaw, wtf??")
+		logging.Critical("can't convert *QueryRaw into *HelpQueryRaw, wtf??")
 		return
 	}
 	query := rawQuery.Validate()

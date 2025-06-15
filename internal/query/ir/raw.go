@@ -167,7 +167,7 @@ type HelpQueryRaw struct {
 	Command models.Command
 }
 
-func (h HelpQueryRaw) queryRaw() {}
+func (h *HelpQueryRaw) queryRaw() {}
 func (h *HelpQueryRaw) String() string {
 	if h == nil {
 		return ""
@@ -177,5 +177,22 @@ func (h *HelpQueryRaw) String() string {
 
 func (h HelpQueryRaw) Validate() *HelpQuery {
 	res := HelpQuery(h)
+	return &res
+}
+
+type FioQueryRaw struct {
+	Name string
+}
+
+func (f *FioQueryRaw) queryRaw() {}
+func (f *FioQueryRaw) String() string {
+	if f == nil {
+		return ""
+	}
+	return fmt.Sprintf("фио %s", f.Name)
+}
+
+func (f FioQueryRaw) Validate() *FioQuery {
+	res := FioQuery(f)
 	return &res
 }

@@ -33,3 +33,12 @@ func (h HelpQuery) query() {}
 func (h HelpQuery) String() string {
 	return fmt.Sprintf("помощь %s", h.Command)
 }
+
+type FioQuery struct {
+	Name string
+}
+
+func (f FioQuery) query() {}
+func (f FioQuery) String() string {
+	return fmt.Sprintf("помощь %s", f.Name)
+}

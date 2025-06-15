@@ -61,6 +61,7 @@ func main() {
 	b.RegisterHandlerMatchFunc(handlers.LessonsMatch, handlers.LessonsHandler, middleware.LogRequest, middleware.DbSync)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "start", bot.MatchTypeCommand, handlers.StartHandler, middleware.LogRequest, middleware.DbSync)
 	b.RegisterHandlerMatchFunc(handlers.HelpMatch, handlers.HelpHandler, middleware.LogRequest, middleware.DbSync)
+	b.RegisterHandlerMatchFunc(handlers.FioMatch, handlers.FioHandler, middleware.DbSync, middleware.LogRequest)
 
 	b.RegisterHandlerMatchFunc(handlers.RegistrationMatch, handlers.Registration, middleware.DbSync, middleware.LogRequest)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "start_yes", bot.MatchTypeExact, handlers.StartYes)
