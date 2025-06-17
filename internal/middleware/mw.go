@@ -63,3 +63,15 @@ func DbSync(next bot.HandlerFunc) bot.HandlerFunc {
 		next(ctx, b, update)
 	}
 }
+
+func CheckAdmin(next bot.HandlerFunc) bot.HandlerFunc {
+	return func(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
+		chatID := shared.GetChatID(update)
+		isAdmin := db.CheckAdmin(chatID)
+		if isAdmin {
+			next(ctx, b, update)
+		} else {
+			b.SendMessage(ctx, shared.Params(update, "Команда доступна только админам"))
+		}
+	}
+}

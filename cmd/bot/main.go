@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/handlers"
+	"github.com/madeinheaven91/black-turtle-go/internal/handlers/admin"
 	"github.com/madeinheaven91/black-turtle-go/internal/middleware"
 	"github.com/madeinheaven91/black-turtle-go/pkg/config"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
@@ -49,6 +50,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	notifier := admin.NewNotificationService(b, 10)
+
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer func() {
 		logging.Info("Recieved interrupt signal, shutting down")
@@ -69,6 +72,8 @@ func main() {
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "reg_group", bot.MatchTypeExact, regFSMHandler.RegGroupStart)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "reg_teacher", bot.MatchTypeExact, regFSMHandler.RegTeacherStart)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "choose", bot.MatchTypePrefix, regFSMHandler.RegMultipleChoice)
+
+	b.RegisterHandler(bot.HandlerTypeMessageText, "send", bot.MatchTypeCommand, notifier.SendHandler, middleware.LogRequest, middleware.DbSync, middleware.CheckAdmin)
 
 	b.Start(ctx)
 }

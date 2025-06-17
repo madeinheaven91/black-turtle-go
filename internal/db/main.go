@@ -162,3 +162,42 @@ func AssignStudyEntity(update *botmodels.Update, studyEntity *models.DBStudyEnti
 	_, err := conn.Exec(context.Background(), "update chat set study_entity_id=$1 where id=$2", studyEntity.ID, chatID)
 	return err
 }
+
+func CheckAdmin(chatID int64) bool {
+	conn := GetConnection()
+	defer CloseConn(conn)
+	var id int
+	err := conn.QueryRow(context.Background(), "select id from admin where chat_id=$1", chatID).Scan(&id)
+	return err == nil
+}
+
+func GetChats() ([]models.DBChat, error) {
+	conn := GetConnection()
+	defer CloseConn(conn)
+	rows, err := conn.Query(context.Background(), "select * from chat")
+	if err != nil {
+		return nil, err
+	}
+	res := make([]models.DBChat, 0, 1)
+	for rows.Next() {
+		var id int64
+		var kind string
+		var name string
+		var username *string
+		var studyEntityID *int
+		var isBanned bool
+		err := rows.Scan(&id, &kind, &name, &username, &studyEntityID, &isBanned)
+		if err == nil {
+			res = append(res, models.DBChat{
+				ID:            id,
+				Kind:          kind,
+				Name:          name,
+				Username:      username,
+				StudyEntityID: studyEntityID,
+				IsBanned:      isBanned,
+			})
+		}
+	}
+
+	return res, nil
+}

@@ -2,6 +2,7 @@ package shared
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/go-telegram/bot"
@@ -92,4 +93,37 @@ func GetChatID(update *botmodels.Update) int64 {
 		return update.CallbackQuery.Message.Message.Chat.ID
 	}
 	return 0
+}
+
+func CopyMessage(ctx context.Context, b *bot.Bot, msg *botmodels.Message, chatID int64) error {
+	var err error
+	switch {
+	case msg.Text != "":
+		_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID:   chatID,
+			Entities: msg.Entities,
+			Text:     msg.Text,
+		})
+	case msg.Photo != nil:
+		_, err = b.SendPhoto(ctx, &bot.SendPhotoParams{
+			ChatID:          chatID,
+			Photo:           &botmodels.InputFileString{Data: msg.Photo[0].FileID},
+			Caption:         msg.Caption,
+			CaptionEntities: msg.CaptionEntities,
+		})
+	case msg.Sticker != nil:
+		_, err = b.SendSticker(ctx, &bot.SendStickerParams{
+			ChatID:  chatID,
+			Sticker: &botmodels.InputFileString{Data: msg.Sticker.FileID},
+		})
+	case msg.Voice != nil:
+		_, err = b.SendVoice(ctx, &bot.SendVoiceParams{
+			ChatID: chatID,
+			Voice:  &botmodels.InputFileString{Data: msg.Voice.FileID},
+		})
+	default:
+		// TODO: proper errors
+		err = fmt.Errorf("unknown message type")
+	}
+	return err
 }
