@@ -201,3 +201,15 @@ func GetChats() ([]models.DBChat, error) {
 
 	return res, nil
 }
+
+func ChatCount() (int, int, error) {
+	conn := GetConnection()
+	defer CloseConn(conn)
+	private, groups := 0, 0
+	row := conn.QueryRow(context.Background(), `select 
+		count(case when kind='private' then 1 end),
+		count(case when kind!='private' then 1 end) 
+	from chat`)
+	err := row.Scan(&private, &groups)
+	return private, groups, err
+}

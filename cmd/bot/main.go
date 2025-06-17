@@ -74,6 +74,7 @@ func main() {
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, "choose", bot.MatchTypePrefix, regFSMHandler.RegMultipleChoice)
 
 	b.RegisterHandler(bot.HandlerTypeMessageText, "send", bot.MatchTypeCommand, notifier.SendHandler, middleware.LogRequest, middleware.DbSync, middleware.CheckAdmin)
+	b.RegisterHandler(bot.HandlerTypeMessageText,  "stat", bot.MatchTypeCommand, admin.StatHandler, middleware.LogRequest, middleware.DbSync, middleware.CheckAdmin)
 
 	b.Start(ctx)
 }
