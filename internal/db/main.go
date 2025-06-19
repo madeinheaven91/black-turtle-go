@@ -240,7 +240,7 @@ func SyncName(update *botmodels.Update) error {
 	case pair{true, false}:
 		_, err = conn.Exec(context.Background(), "update chat set username=$1 where id=$2", newUsername, update.Message.Chat.ID)
 	case pair{false, false}:
-		_, err = conn.Exec(context.Background(), "update chat set name=$1, username=$1 where id=$2", newName, newUsername, update.Message.Chat.ID)
+		_, err = conn.Exec(context.Background(), "update chat set name=$1, username=$2 where id=$3", newName, newUsername, update.Message.Chat.ID)
 	}
 	return err
 }
