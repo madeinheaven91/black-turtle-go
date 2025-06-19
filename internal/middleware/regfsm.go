@@ -92,7 +92,7 @@ func NewFSMHandler(fsm *FSM) *FSMHandler {
 func (fh *FSMHandler) RegGroupEnter(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	chatID := shared.GetChatID(update)
 	// Get study entities by name and filter groups
-	tmp, err := db.GetStudyEntities(update.Message.Text)
+	tmp, err := db.StudyEntities(update.Message.Text)
 	studyEntities := make([]models.DBStudyEntity, 0, 1)
 	for _, entity := range tmp {
 		if entity.Kind == models.Group {
@@ -130,7 +130,7 @@ func (fh *FSMHandler) RegGroupEnter(ctx context.Context, b *bot.Bot, update *bot
 
 func (fh *FSMHandler) RegTeacherEnter(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	chatID := shared.GetChatID(update)
-	tmp, err := db.GetStudyEntities(update.Message.Text)
+	tmp, err := db.StudyEntities(update.Message.Text)
 	studyEntities := make([]models.DBStudyEntity, 0, 1)
 	for _, entity := range tmp {
 		if entity.Kind == models.Teacher {
@@ -236,7 +236,7 @@ func (fh *FSMHandler) RegMultipleChoice(ctx context.Context, b *bot.Bot, update 
 		fh.FSM.End(update.CallbackQuery.Message.Message.Chat.ID)
 		return
 	}
-	entity, err := db.GetStudyEntityByID(id)
+	entity, err := db.StudyEntityByID(id)
 	if err != nil {
 		logging.Error("incorrect multiple choice message (wrong id): %s", update.CallbackQuery.Data)
 		b.SendMessage(ctx, shared.Params(update, lexicon.Error(lexicon.EGeneral)))

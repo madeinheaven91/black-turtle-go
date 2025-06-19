@@ -69,7 +69,7 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		displayName = "null"
 	}
 	msg := messages.BuildDayMsg(
-		week.Days[shared.NormalizeWeekday(query.Date.Weekday())],
+		&week.Days[shared.NormalizeWeekday(query.Date.Weekday())],
 		query.Date,
 		displayName,
 	)

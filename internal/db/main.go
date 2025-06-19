@@ -9,15 +9,15 @@ import (
 	botmodels "github.com/go-telegram/bot/models"
 	"github.com/jackc/pgx/v5"
 
-	"github.com/madeinheaven91/black-turtle-go/pkg/config"
-	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/config" 
+	"github.com/madeinheaven91/black-turtle-go/pkg/errors" 
 	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
-func GetConnection() *pgx.Conn {
+func connection() *pgx.Conn {
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		config.PgUser(),
 		config.PgPassword(),
@@ -34,13 +34,13 @@ func GetConnection() *pgx.Conn {
 }
 
 // NOTE: so that importing context isnt necessary
-func CloseConn(conn *pgx.Conn) {
+func close(conn *pgx.Conn) {
 	conn.Close(context.Background())
 }
 
-func GetStudyEntities(input string) ([]models.DBStudyEntity, error) {
-	conn := GetConnection()
-	defer CloseConn(conn)
+func StudyEntities(input string) ([]models.DBStudyEntity, error) {
+	conn := connection()
+	defer close(conn)
 	rows, err := conn.Query(context.Background(), "select * from study_entity")
 	if err != nil {
 		return nil, err
@@ -69,9 +69,9 @@ func GetStudyEntities(input string) ([]models.DBStudyEntity, error) {
 	return res, nil
 }
 
-func GetStudyEntityByChat(chatId int64) (*models.DBStudyEntity, error) {
-	conn := GetConnection()
-	defer CloseConn(conn)
+func StudyEntityByChat(chatId int64) (*models.DBStudyEntity, error) {
+	conn := connection()
+	defer close(conn)
 	row := conn.QueryRow(context.Background(), "select study_entity.* from study_entity join chat on chat.study_entity_id=study_entity.id where chat.id=$1", chatId)
 	var id int
 	var api_id int
@@ -90,9 +90,9 @@ func GetStudyEntityByChat(chatId int64) (*models.DBStudyEntity, error) {
 	return &res, nil
 }
 
-func GetStudyEntityByID(id int) (*models.DBStudyEntity, error) {
-	conn := GetConnection()
-	defer CloseConn(conn)
+func StudyEntityByID(id int) (*models.DBStudyEntity, error) {
+	conn := connection()
+	defer close(conn)
 	row := conn.QueryRow(context.Background(), "select api_id, kind, name from study_entity where id = $1;", id)
 	var api_id int
 	var kind string
@@ -112,8 +112,8 @@ func GetStudyEntityByID(id int) (*models.DBStudyEntity, error) {
 }
 
 func AddChat(update *botmodels.Update) error {
-	conn := GetConnection()
-	defer CloseConn(conn)
+	conn := connection()
+	defer close(conn)
 	{
 		var existing string
 		err := conn.QueryRow(context.Background(), "select name from chat where id=$1", update.Message.Chat.ID).Scan(&existing)
@@ -130,9 +130,9 @@ func AddChat(update *botmodels.Update) error {
 	return err
 }
 
-func GetChat(chatId int64) *models.DBChat {
-	conn := GetConnection()
-	defer CloseConn(conn)
+func Chat(chatId int64) *models.DBChat {
+	conn := connection()
+	defer close(conn)
 	row := conn.QueryRow(context.Background(), "select * from chat where id=$1", chatId)
 	var id int64
 	var kind string
@@ -156,24 +156,24 @@ func GetChat(chatId int64) *models.DBChat {
 }
 
 func AssignStudyEntity(update *botmodels.Update, studyEntity *models.DBStudyEntity) error {
-	conn := GetConnection()
-	defer CloseConn(conn)
+	conn := connection()
+	defer close(conn)
 	chatID := shared.GetChatID(update)
 	_, err := conn.Exec(context.Background(), "update chat set study_entity_id=$1 where id=$2", studyEntity.ID, chatID)
 	return err
 }
 
 func CheckAdmin(chatID int64) bool {
-	conn := GetConnection()
-	defer CloseConn(conn)
+	conn := connection()
+	defer close(conn)
 	var id int
 	err := conn.QueryRow(context.Background(), "select id from admin where chat_id=$1", chatID).Scan(&id)
 	return err == nil
 }
 
-func GetChats() ([]models.DBChat, error) {
-	conn := GetConnection()
-	defer CloseConn(conn)
+func Chats() ([]models.DBChat, error) {
+	conn := connection()
+	defer close(conn)
 	rows, err := conn.Query(context.Background(), "select * from chat")
 	if err != nil {
 		return nil, err
@@ -203,8 +203,8 @@ func GetChats() ([]models.DBChat, error) {
 }
 
 func ChatCount() (int, int, error) {
-	conn := GetConnection()
-	defer CloseConn(conn)
+	conn := connection()
+	defer close(conn)
 	private, groups := 0, 0
 	row := conn.QueryRow(context.Background(), `select 
 		count(case when kind='private' then 1 end),
@@ -212,4 +212,35 @@ func ChatCount() (int, int, error) {
 	from chat`)
 	err := row.Scan(&private, &groups)
 	return private, groups, err
+}
+
+func SyncName(update *botmodels.Update) error {
+	type pair struct {
+		fst bool
+		snd bool
+	}
+	conn := connection()
+	defer close(conn)
+	row := conn.QueryRow(context.Background(), "select * from chat where id=$1", update.Message.Chat.ID)
+	var name string
+	var username string
+	err := row.Scan(nil, nil, &name, &username, nil, nil); if err != nil {
+		return err
+	}
+
+	newName := shared.GetChatName(update)
+	newUsername := update.Message.Chat.Username
+	matches := pair{
+		name == newName,
+		username == newUsername,
+	}
+	switch matches {
+	case pair{false, true}:
+		_, err = conn.Exec(context.Background(), "update chat set name=$1 where id=$2", newName, update.Message.Chat.ID)
+	case pair{true, false}:
+		_, err = conn.Exec(context.Background(), "update chat set username=$1 where id=$2", newUsername, update.Message.Chat.ID)
+	case pair{false, false}:
+		_, err = conn.Exec(context.Background(), "update chat set name=$1 username=$1 where id=$2", newName, newUsername, update.Message.Chat.ID)
+	}
+	return err
 }

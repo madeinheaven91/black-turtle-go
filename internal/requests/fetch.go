@@ -16,8 +16,6 @@ import (
 )
 
 func FetchWeek(query *ir.LessonsQuery) (*models.APIResponse, error) {
-	// logging.Debug("Requesting %s with api id %d for %s\n", entityType, entityId, queryDate.Format("02.01.2006"))
-
 	payload := lessonsPayload(query)
 	b := bytes.NewBuffer([]byte(payload))
 

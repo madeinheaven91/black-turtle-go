@@ -13,10 +13,9 @@ type APIResponse struct {
 	Lessons   []APILesson `json:"lessons"`
 }
 
-// FIXME: вроде работает, но я не понимаю что тут происходит
 func (r *APIResponse) IntoWeek() SchoolWeek {
 	if r.Group != nil {
-		// deser group
+		// a map of weekday:lessons
 		lessons := make(map[int][]Lesson)
 		for _, l := range r.Lessons {
 			var teacher *string
@@ -43,21 +42,16 @@ func (r *APIResponse) IntoWeek() SchoolWeek {
 		}
 
 		days := make([]SchoolDay, 7)
+		for i := range 7 {
+			days = append(days, SchoolDay{Weekday: i})
+		}
 		for k, v := range lessons {
 			sort.Slice(v, func(i, j int) bool {
 				return v[i].Index < v[j].Index
 			})
-			days[k] = SchoolDay{
-				k,
-				v,
-			}
+			days[k].Lessons = v
 		}
-		sort.Slice(days, func(i, j int) bool {
-			return days[i].Weekday < days[j].Weekday
-		})
-		for len(days) < 7 {
-			days = append(days, SchoolDay{})
-		}
+
 		res := SchoolWeek{
 			r.Group.Name,
 			r.StartDate,
@@ -66,7 +60,7 @@ func (r *APIResponse) IntoWeek() SchoolWeek {
 		}
 		return res
 	} else if r.Teacher != nil {
-		// deser teacher
+		// a map of weekday:lessons
 		lessons := make(map[int][]Lesson)
 		for _, l := range r.Lessons {
 			var group *string
@@ -93,21 +87,16 @@ func (r *APIResponse) IntoWeek() SchoolWeek {
 		}
 
 		days := make([]SchoolDay, 7)
+		for i := range 7 {
+			days = append(days, SchoolDay{Weekday: i})
+		}
 		for k, v := range lessons {
 			sort.Slice(v, func(i, j int) bool {
 				return v[i].Index < v[j].Index
 			})
-			days[k] = SchoolDay{
-				k,
-				v,
-			}
+			days[k].Lessons = v
 		}
-		sort.Slice(days, func(i, j int) bool {
-			return days[i].Weekday < days[j].Weekday
-		})
-		for len(days) < 7 {
-			days = append(days, SchoolDay{})
-		}
+
 		res := SchoolWeek{
 			*r.Teacher.Fio,
 			r.StartDate,

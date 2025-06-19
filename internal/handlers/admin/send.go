@@ -90,7 +90,7 @@ func (ns *NotificationService) sendMsgToAll(update *botmodels.Update, msg *botmo
 	ns.Start()
 	defer ns.Stop()
 
-	chats, err := db.GetChats()
+	chats, err := db.Chats()
 	if err != nil {
 		ns.bot.SendMessage(ns.ctx, shared.Params(update, "Не удалость отослать сообщение"))
 		return

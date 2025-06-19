@@ -136,7 +136,7 @@ func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 	var entity *models.DBStudyEntity
 	var err error
 	if l.StudyEntityName == nil {
-		entity, err = db.GetStudyEntityByChat(chatID)
+		entity, err = db.StudyEntityByChat(chatID)
 		if err != nil {
 			return nil, err
 		}
@@ -155,7 +155,7 @@ func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 }
 
 func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
-	entities, err := db.GetStudyEntities(name)
+	entities, err := db.StudyEntities(name)
 	if err != nil || len(entities) == 0 {
 		return nil, err
 	}

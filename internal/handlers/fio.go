@@ -40,7 +40,7 @@ func FioHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 		return
 	}
 	query := rawQuery.Validate()
-	entities, err := db.GetStudyEntities(query.Name)
+	entities, err := db.StudyEntities(query.Name)
 	if err != nil {
 		logging.Error("%s", err.Error())
 		b.SendMessage(ctx, shared.Params(update, lexicon.Error(lexicon.EGeneral)))

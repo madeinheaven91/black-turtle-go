@@ -12,7 +12,7 @@ import (
 )
 
 // TODO:
-func BuildDayMsg(day models.SchoolDay, date time.Time, entityName string) string {
+func BuildDayMsg(day *models.SchoolDay, date time.Time, entityName string) string {
 	var sb strings.Builder
 	sb.WriteString("<b>")
 	sb.WriteString(entityName)
@@ -37,7 +37,7 @@ func BuildDayMsg(day models.SchoolDay, date time.Time, entityName string) string
 		weekday = "???"
 	}
 
-	if len(day.Lessons) == 0 {
+	if day == nil || len(day.Lessons) == 0 {
 		sb.WriteString(weekday)
 		sb.WriteRune('\n')
 		sb.WriteString(date.Format("02.01.06"))

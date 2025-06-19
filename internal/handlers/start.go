@@ -13,7 +13,7 @@ import (
 )
 
 func StartHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
-	chat := db.GetChat(update.Message.Chat.ID)
+	chat := db.Chat(update.Message.Chat.ID)
 	if chat != nil {
 		logging.Info("Chat (%d) already exists", chat.ID)
 		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, lexicon.Get(lexicon.Start)), keyboards.Start()))

@@ -17,8 +17,8 @@ var (
 	infoLogger     = log.New(os.Stdout, "\033[1;94m[INFO]\033[0m ", log.LstdFlags)
 	warningLogger  = log.New(os.Stdout, "\033[1;33m[WARN]\033[0m ", log.LstdFlags)
 	errorLogger    = log.New(os.Stdout, "\033[1;31m[ERROR]\033[0m ", log.LstdFlags)
-	debugLogger    = log.New(os.Stdout, "\033[1;92m[DEBUG]\033[0m ", log.LstdFlags)
-	traceLogger    = log.New(os.Stdout, "\033[1;90m[TRACE]\033[0m ", log.LstdFlags)
+	debugLogger    = log.New(os.Stdout, "\033[1;92m[DEBUG]\033[0m ", log.LstdFlags|log.Lmicroseconds)
+	traceLogger    = log.New(os.Stdout, "\033[1;90m[TRACE]\033[0m ", log.LstdFlags|log.Lmicroseconds)
 
 	logLevels = map[string]int{
 		"CRITICAL": 0,
