@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/db"
+	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/models"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
@@ -156,8 +158,11 @@ func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 
 func validateStudyEntity(name string) (*models.DBStudyEntity, error) {
 	entities, err := db.StudyEntities(name)
-	if err != nil || len(entities) == 0 {
+	if err != nil {
 		return nil, err
+	}
+	if len(entities) == 0 {
+		return nil, errors.From(fmt.Errorf("unknown study entity"), "valiation error", lexicon.EStudyEntityNotFound, map[string]any{"name": name})
 	}
 	// FIXME: maybe shouldnt be that way
 	return &entities[0], nil
