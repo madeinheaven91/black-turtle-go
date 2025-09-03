@@ -25,7 +25,7 @@ func LessonsMatch(update *models.Update) bool {
 	}
 }
 
-func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+func (c Container) LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	// 1. parse input into request struct
 	// 2. fetch week based on request
 	// 3. select requested day from a week
@@ -47,8 +47,9 @@ func LessonsHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		return
 	}
 	query, err := lqr.Validate(update.Message.Chat.ID)
-	ok = shared.HandleBotError(err, ctx, b, update)
-	if !ok {
+	if err != nil {
+		logging.Error("%q", err)
+		b.SendMessage(ctx, shared.Params(update, errors.Get(lexicon.EStudyEntityNotSelected)))
 		return
 	}
 

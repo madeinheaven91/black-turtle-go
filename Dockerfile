@@ -1,4 +1,4 @@
-FROM golang:1.24.3-bookworm
+FROM golang:1.24.6-bookworm
 
 WORKDIR /app
 
@@ -10,7 +10,6 @@ COPY . .
 
 WORKDIR /app/cmd/bot
 RUN CGO_ENABLED=0 GOOS=linux go build -o bot
-
 
 WORKDIR /app
 CMD ["./cmd/bot/bot"]

@@ -85,8 +85,13 @@ type FSMHandler struct {
 	FSM *FSM
 }
 
-func NewFSMHandler(fsm *FSM) *FSMHandler {
-	return &FSMHandler{fsm}
+func NewFSMHandler(regFSM *FSM) *FSMHandler {
+	regFSMHandler := FSMHandler{regFSM}
+	regFSM.RegisterHandler(fsm.EnterGroup, regFSMHandler.RegGroupEnter)
+	regFSM.RegisterHandler(fsm.EnterTeacher, regFSMHandler.RegTeacherEnter)
+	regFSM.RegisterHandler(fsm.RegCancel, regFSMHandler.RegCancel)
+	regFSM.RegisterHandler(fsm.MultipleChoice, regFSMHandler.RegMultipleChoice)
+	return &regFSMHandler
 }
 
 func (fh *FSMHandler) RegGroupEnter(ctx context.Context, b *bot.Bot, update *botmodels.Update) {

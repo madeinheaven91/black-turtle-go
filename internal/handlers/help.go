@@ -25,7 +25,7 @@ func HelpMatch(update *botmodels.Update) bool {
 	}
 }
 
-func HelpHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
+func (c Container) HelpHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	logging.Debug("Handling help request")
 	p := parser.FromString(update.Message.Text)
 	rawQ := p.ParseQuery()

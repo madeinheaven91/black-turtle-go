@@ -12,16 +12,15 @@ import (
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
 
-func StartHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
+func (c Container) StartHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	chat := db.Chat(update.Message.Chat.ID)
 	if chat != nil {
 		logging.Info("Chat (%d) already exists", chat.ID)
-		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, lexicon.Get(lexicon.Start)), keyboards.Start()))
 	} else {
 		logging.Info("New chat (%d)!", update.Message.Chat.ID)
 		db.AddChat(update)
-		b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, "Добавил"), keyboards.Default()))
 	}
+	b.SendMessage(ctx, shared.AddReplyMarkup(shared.Params(update, lexicon.Get(lexicon.Start)), keyboards.Start()))
 }
 
 func StartNo(ctx context.Context, b *bot.Bot, update *botmodels.Update) {

@@ -131,6 +131,8 @@ func (l *LessonsQueryRaw) Date() *time.Time {
 	}
 }
 
+// Validate checks returns an error if a caller chat didn't select a study entity 
+// and not providing it in the query.
 func (l LessonsQueryRaw) Validate(chatID int64) (*LessonsQuery, error) {
 	var res LessonsQuery
 	res.Date = *l.Date()

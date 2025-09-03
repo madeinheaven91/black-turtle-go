@@ -19,7 +19,7 @@ func RegistrationMatch(update *botmodels.Update) bool {
 	}
 }
 
-func Registration(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
+func (c Container) Registration(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	b.SendMessage(ctx,
 		shared.AddReplyMarkup(
 			shared.Params(update, lexicon.Get(lexicon.RegGroupOrTeacher)),

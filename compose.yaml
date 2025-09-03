@@ -25,8 +25,9 @@ services:
       PGPORT: ${POSTGRES_PORT}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - migrations:/migrations
         # - transfer:/var/transfer:rw
-    restart: unless-stopped
+    restart: always
 
   pgadmin:
     container_name: bt-pgadmin
@@ -47,3 +48,9 @@ volumes:
   postgres-data:
   pgadmin:
     # transfer:
+  migrations:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./migrations

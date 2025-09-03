@@ -25,7 +25,7 @@ func FioMatch(update *botmodels.Update) bool {
 	}
 }
 
-func FioHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
+func (c Container) FioHandler(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 	logging.Debug("Handling FIO request")
 	p := parser.FromString(update.Message.Text)
 	rawQ := p.ParseQuery()

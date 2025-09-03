@@ -2,11 +2,14 @@ package middleware
 
 import (
 	"context"
+	"runtime/debug"
 
 	"github.com/go-telegram/bot"
 	botmodels "github.com/go-telegram/bot/models"
 
 	"github.com/madeinheaven91/black-turtle-go/internal/db"
+	"github.com/madeinheaven91/black-turtle-go/pkg/errors"
+	"github.com/madeinheaven91/black-turtle-go/pkg/lexicon"
 	"github.com/madeinheaven91/black-turtle-go/pkg/logging"
 	"github.com/madeinheaven91/black-turtle-go/pkg/shared"
 )
@@ -17,14 +20,14 @@ func LogRequest(next bot.HandlerFunc) bot.HandlerFunc {
 		if update.Message.Chat.Type == "private" {
 			logging.Telegram("%s (%d): %s\n", name, update.Message.Chat.ID, update.Message.Text)
 		} else {
-			chat_name := shared.GetChatName(update)
-			logging.Telegram("%s (%d) in %s (%d): %s\n", name, update.Message.From.ID, chat_name, update.Message.Chat.ID, update.Message.Text)
+			chatName := shared.GetChatName(update)
+			logging.Telegram("%s (%d) in %s (%d): %s\n", name, update.Message.From.ID, chatName, update.Message.Chat.ID, update.Message.Text)
 		}
 		next(ctx, b, update)
 	}
 }
 
-func DbSync(next bot.HandlerFunc) bot.HandlerFunc {
+func DBSync(next bot.HandlerFunc) bot.HandlerFunc {
 	return func(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
 		err := db.SyncName(update)
 		if err != nil {
@@ -33,6 +36,18 @@ func DbSync(next bot.HandlerFunc) bot.HandlerFunc {
 		} else {
 			next(ctx, b, update)
 		}
+	}
+}
+
+func Recover(next bot.HandlerFunc) bot.HandlerFunc {
+	return func(ctx context.Context, b *bot.Bot, update *botmodels.Update) {
+		defer func() {
+			if rvr := recover(); rvr != nil {
+				logging.Critical("panic: %s\n%s\n", rvr, debug.Stack())
+				b.SendMessage(ctx, shared.Params(update, errors.Get(lexicon.EParser)))
+			}
+		}()
+		next(ctx, b, update)
 	}
 }
 
